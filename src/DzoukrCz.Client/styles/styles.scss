@@ -2,30 +2,16 @@
 
 @import "~@fortawesome/fontawesome-free/css/all.min.css";
 @import "~bulma";
+@import "~@creativebulma/bulma-divider";
 
-footer {
-    text-align: center;
+@import "footer";
+@import "profile";
+@import "icons";
 
-    .icons {
-        i {
-            margin-left: 0.3em;
-        }
-        a {
-            color: #363636;
-            opacity: 0.7;
-        }
-        a:hover {
-            opacity: 1;
-        }
-    }
-
-    hr {
-        width: 20em;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .copyright {
-        font-size: 0.9em;
-    }
+a {
+    color: #126BA1;
+    font-weight: 500;
+}
+a:hover {
+    color: #449DD3;
 }

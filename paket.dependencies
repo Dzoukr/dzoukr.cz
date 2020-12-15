@@ -13,6 +13,7 @@ nuget Fable.React
 nuget Fable.Remoting.Client
 nuget Feliz
 nuget Feliz.Bulma
+nuget Feliz.Bulma.Divider
 nuget Feliz.Router
 nuget Feliz.UseElmish
 nuget FsToolkit.ErrorHandling.TaskResult

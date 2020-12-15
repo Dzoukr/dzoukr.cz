@@ -1,0 +1,19 @@
+﻿.profile {
+    figure {
+        @extend .is-flex;
+        justify-content: center;
+        img {
+            height: 80%;
+            width: 80%;
+        }
+        margin-bottom: 1em;
+    }
+    .icons {
+        margin-top: 2em;
+        text-align: center;
+    }
+    .home-team {
+        @extend .is-flex;
+        justify-content: center;
+    }
+}

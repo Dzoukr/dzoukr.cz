@@ -22,4 +22,13 @@ type Html
                 prop.href href
                 prop.children [ Html.faIcon cn ]
             ]
+        static member inline faIconTextLink iconClass link (text:string) =
+            Html.a [
+                prop.className "icon-text-link"
+                prop.href link
+                prop.children [
+                    Html.faIcon iconClass
+                    Html.span text
+                ]
+            ]
         static member inline divClassed (cn:string) (elms:seq<ReactElement>) = Html.div [ prop.className cn; prop.children elms ]
