@@ -25,7 +25,7 @@ var CONFIG = {
     indexHtmlTemplate: './src/DzoukrCz.Client/public/index.html',
     fsharpEntry: './src/DzoukrCz.Client/.fable-build/App.js',
     cssEntry: './src/DzoukrCz.Client/styles/styles.scss',
-    outputDir: './publish/app/public',
+    outputDir: './publish/app/client',
     assetsDir: './src/DzoukrCz.Client/public',
     devServerPort: 8080,
     // When using webpack-dev-server, you may need to redirect some calls

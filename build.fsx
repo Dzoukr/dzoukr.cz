@@ -43,7 +43,8 @@ let srcPath = Path.getFullName "src"
 let toolsPath = Path.getFullName "tools"
 let clientSrcPath = srcPath </> "DzoukrCz.Client"
 let serverSrcPath = srcPath </> "DzoukrCz.Server"
-let appPublishPath = publishPath </> "app"
+let clientPublishPath = publishPath </> "app" </> "client"
+let serverPublishPath = publishPath </> "app" </> "server"
 let fableBuildPath = clientSrcPath </> ".fable-build"
 let infrastructurePublishPath = publishPath </> "infrastructure"
 
@@ -58,12 +59,16 @@ Target.create "InstallClient" (fun _ ->
     Tools.yarn "install --frozen-lockfile" clientSrcPath
 )
 
-Target.create "Publish" (fun _ ->
-    [ appPublishPath ] |> Shell.cleanDirs
-    let publishArgs = sprintf "publish -c Release -o \"%s\"" appPublishPath
-    Tools.dotnet publishArgs serverSrcPath
-    [ appPublishPath </> "appsettings.Development.json" ] |> File.deleteAll
+Target.create "PublishClient" (fun _ ->
+    [ clientPublishPath ] |> Shell.cleanDirs
     Tools.dotnet (sprintf "fable --outDir %s --run webpack-cli -p" fableBuildPath) clientSrcPath
+)
+
+Target.create "PublishServer" (fun _ ->
+    [ serverPublishPath ] |> Shell.cleanDirs
+    let publishArgs = sprintf "publish -c Release -o \"%s\"" serverPublishPath
+    Tools.dotnet publishArgs serverSrcPath
+    [ serverPublishPath </> "appsettings.Development.json" ] |> File.deleteAll
 )
 
 Target.create "PublishInfrastructure" (fun _ ->
@@ -84,11 +89,15 @@ Target.create "Run" (fun _ ->
     |> ignore
 )
 
-"InstallClient"
-    ==> "PublishInfrastructure"
-    ==> "Publish"
+Target.create "Publish" (fun _ ->
+    [
+        "PublishClient"
+        "PublishServer"
+        "PublishInfrastructure"
+    ] |> List.iter (fun t -> Target.run 1 t [])
+)
 
-"InstallClient"
-    ==> "Run"
+"InstallClient" ==> "PublishClient"
+"InstallClient" ==> "Run"
 
 Target.runOrDefaultWithArguments "Run"
