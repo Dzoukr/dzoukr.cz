@@ -203,11 +203,13 @@ let Talks () =
                     table.isNarrow
                     prop.children [
                         Html.thead [
-                            Html.th "Date"
-                            Html.th "Location"
-                            Html.th "Event"
-                            Html.th "Title"
-                            Html.th "Language"
+                            Html.tr [
+                                Html.th "Date"
+                                Html.th "Location"
+                                Html.th "Event"
+                                Html.th "Title"
+                                Html.th "Language"
+                            ]
                         ]
                         Html.tbody [
                             for d in data do
