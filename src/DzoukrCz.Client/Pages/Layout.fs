@@ -74,13 +74,16 @@ let basic (middle:ReactElement) =
         Bulma.section [
             Bulma.container [
                 Bulma.columns [
-                    Bulma.column [
-                        column.isOneQuarter
-                        prop.children [
-                            Bulma.box [ letfCol ]
+                    columns.isDesktop
+                    prop.children [
+                        Bulma.column [
+                            column.isOneQuarter
+                            prop.children [
+                                Bulma.box [ letfCol ]
+                            ]
                         ]
+                        Bulma.column [ middle ]
                     ]
-                    Bulma.column [ middle ]
                 ]
 
             ]
