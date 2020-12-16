@@ -8,7 +8,6 @@
         <Compile Include="Router.fs" />
         <Compile Include="SharedView.fs" />
         <Compile Include="Pages\Layout.fs" />
-        <Compile Include="Pages\Index\State.fs" />
         <Compile Include="Pages\Index\View.fs" />
         <Compile Include="State.fs" />
         <Compile Include="View.fs" />

@@ -69,7 +69,7 @@ NUGET
       Fable.React (>= 7.0.1)
       Feliz.CompilerPlugins (>= 1.2)
       FSharp.Core (>= 4.7.2)
-    Feliz.Bulma (2.7)
+    Feliz.Bulma (2.8.1)
       Feliz (>= 1.22)
       FSharp.Core (>= 5.0)
     Feliz.Bulma.Divider (1.0.1)
