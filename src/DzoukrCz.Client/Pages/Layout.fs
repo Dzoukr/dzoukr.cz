@@ -10,7 +10,7 @@ let icons =
     Html.divClassed "icons" [
         Html.faIconLink "fab fa-github fa-2x" "https://github.com/dzoukr"
         Html.faIconLink "fab fa-twitter fa-2x" "https://twitter.com/rprovaznik"
-        Html.faIconLink "fab fa-linkedin fa-2x" "https://www.linkedin.com/in/romanprovaznik/"
+        Html.faIconLink "fab fa-linkedin fa-2x" "https://www.linkedin.com/in/rprovaznik/"
     ]
 
 let footer =
@@ -27,41 +27,37 @@ let footer =
 
 let letfCol =
     Html.divClassed "profile" [
-        Bulma.image [
-            prop.children [
-                Html.img [
-                    prop.src "img/profile.png"
-                    image.isRounded
-                ]
-            ]
-        ]
-        Bulma.container [
-            Bulma.title.h1 [
-                title.is3
-                prop.text "Roman Provazník"
-            ]
-            Bulma.subtitle.p [
+        Bulma.block [
+            Bulma.image [
                 prop.children [
-                    Html.text "F# |> I Love"
+                    Html.img [
+                        prop.src "img/profile.png"
+                        image.isRounded
+                    ]
                 ]
             ]
         ]
-        Bulma.container [
-            Divider.divider [ divider.text "Bio" ]
+        Bulma.block [
+            Bulma.title "Roman Provazník"
+            Bulma.subtitle "F# |> I ❤️"
+        ]
+        Bulma.block [
+            Bulma.title.h2 "Bio"
             Html.div [ prop.children [ Html.text "F# Team Leader @ "; Html.a [ prop.text "CN Group CZ"; prop.href "https://www.cngroup.dk" ] ] ]
             Html.div [ prop.children [ Html.text "Founder @ "; Html.a [ prop.text "FSharping"; prop.href "https://fsharping.com" ] ] ]
-            Html.div "Speaker, melomaniac & bad drummer"
+            Html.div "Speaker, melomaniac & terrible drummer"
         ]
-        Bulma.container [
-            Divider.divider [ divider.text "Contact" ]
+        Bulma.block [
+            Bulma.title.h2 "Contact"
             Html.div [
                 Html.faIconTextLink "fab fa-github" "https://github.com/dzoukr" "github.com/dzoukr" |> Html.div
                 Html.faIconTextLink "fab fa-twitter" "https://twitter.com/rprovaznik" "twitter.com/rprovaznik" |> Html.div
-                Html.faIconTextLink "fab fa-linkedin" "https://www.linkedin.com/in/romanprovaznik/" "linkedin.com/in/romanprovaznik" |> Html.div
+                Html.faIconTextLink "fab fa-linkedin" "https://www.linkedin.com/in/rprovaznik/" "linkedin.com/in/rprovaznik" |> Html.div
             ]
         ]
-        Bulma.container [
+        Bulma.block [
             Divider.divider [ divider.text "Home Team" ]
+            //Bulma.title.h2 "# Home Team"
             Html.divClassed "home-team" [
                 Html.a [
                     prop.children [
@@ -80,7 +76,9 @@ let basic (middle:ReactElement) =
                 Bulma.columns [
                     Bulma.column [
                         column.isOneQuarter
-                        prop.children [ letfCol ]
+                        prop.children [
+                            Bulma.box [ letfCol ]
+                        ]
                     ]
                     Bulma.column [ middle ]
                 ]
