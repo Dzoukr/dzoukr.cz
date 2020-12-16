@@ -197,34 +197,25 @@ let Talks () =
             ]
 
             if data.Length > 0 then
-                Bulma.table [
-                    table.isFullWidth
-                    table.isStriped
-                    table.isNarrow
+
+                Html.div [
+                    prop.className "grid"
                     prop.children [
-                        Html.thead [
-                            Html.tr [
-                                Html.th "Date"
-                                Html.th "Location"
-                                Html.th "Event"
-                                Html.th "Title"
-                                Html.th "Language"
+                        Html.span "Date"
+                        Html.span "Location"
+                        Html.span "Event"
+                        Html.span "Title"
+                        Html.span "Language"
+                        for d in data do
+                            Html.span [ prop.text (d.Date.ToString("dd. MM. yyyy")) ]
+                            Html.span [ prop.text d.Location ]
+                            Html.span [ prop.text d.Event ]
+                            Html.span [
+                                match d.Link with
+                                | Some l -> Html.a [ prop.href l; prop.text d.Title ]
+                                | None -> Html.text d.Title
                             ]
-                        ]
-                        Html.tbody [
-                            for d in data do
-                                Html.tr [
-                                    Html.td [ prop.text (d.Date.ToString("dd. MM. yyyy")) ]
-                                    Html.td [ prop.text d.Location ]
-                                    Html.td [ prop.text d.Event ]
-                                    Html.td [
-                                        match d.Link with
-                                        | Some l -> Html.a [ prop.href l; prop.text d.Title ]
-                                        | None -> Html.text d.Title
-                                    ]
-                                    Html.td [ prop.text (string d.Lang) ]
-                                ]
-                        ]
+                            Html.span [ prop.text (string d.Lang) ]
                     ]
                 ]
             else
