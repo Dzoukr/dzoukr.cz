@@ -26,33 +26,3 @@ a {
 a:hover {
     color: #449DD3;
 }
-
-.grid {
-    display: grid;
-    grid-template-columns: repeat(5, auto);
-
-    span:nth-child(10n+11),
-    span:nth-child(10n+12),
-    span:nth-child(10n+13),
-    span:nth-child(10n+14),
-    span:nth-child(10n+15),
-    {
-        background-color: #fafafa;
-    }
-
-    span:nth-child(0n+1),
-    span:nth-child(0n+2),
-    span:nth-child(0n+3),
-    span:nth-child(0n+4),
-    span:nth-child(0n+5) {
-        font-weight: bold;
-        border-width: 0 0 2px;
-        color: #363636;
-    }
-
-    span {
-        padding: 0.25em 0.5em;
-        border: 1px solid #dbdbdb;
-        border-width: 0 0 1px;
-    }
-}

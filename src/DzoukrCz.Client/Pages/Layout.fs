@@ -57,7 +57,6 @@ let letfCol =
         ]
         Bulma.block [
             Divider.divider [ divider.text "Home Team" ]
-            //Bulma.title.h2 "# Home Team"
             Html.divClassed "home-team" [
                 Html.a [
                     prop.children [
@@ -74,7 +73,6 @@ let basic (middle:ReactElement) =
         Bulma.section [
             Bulma.container [
                 Bulma.columns [
-                    columns.isDesktop
                     prop.children [
                         Bulma.column [
                             column.isOneQuarter
