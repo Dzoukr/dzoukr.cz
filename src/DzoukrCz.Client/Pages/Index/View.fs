@@ -213,10 +213,12 @@ let talkInfo (t:Talk) =
                         else Html.text t.Title
                     ]
                 ]
-                Html.divClassed "talk-event" [ Html.text t.Event ]
-                Html.divClassed "talk-date" [
-                    Html.faIcon "far fa-calendar-alt"
-                    Html.text date
+                Html.div [
+                    Html.divClassed "talk-event" [ Html.text t.Event ]
+                    Html.divClassed "talk-date" [
+                        Html.faIcon "far fa-calendar-alt"
+                        Html.text date
+                    ]
                 ]
             ]
         ]
