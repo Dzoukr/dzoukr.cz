@@ -100,7 +100,7 @@ let projectInfo (p:Project) =
     ]
 
 let projects =
-    let col c = Bulma.column [ column.is4Desktop; column.is6Tablet; prop.children [ c ] ]
+    let col c = Bulma.column [ column.is4Widescreen; column.is6Tablet; prop.children [ c ] ]
     Html.divClassed "projects" [
         Bulma.block [
             Bulma.title.h2 "F# Projects"
@@ -234,7 +234,7 @@ let Talks () =
                 prop.children [
                     for t in talks do
                         Bulma.column [
-                            column.is3Desktop
+                            column.is3Widescreen
                             column.is6Tablet
                             prop.children [ talkInfo t ]
                         ]
