@@ -75,7 +75,8 @@ let basic (middle:ReactElement) =
                 Bulma.columns [
                     prop.children [
                         Bulma.column [
-                            column.isOneQuarter
+                            column.isOneQuarterDesktop
+                            column.isOneThirdTablet
                             prop.children [
                                 Bulma.box [ letfCol ]
                             ]
