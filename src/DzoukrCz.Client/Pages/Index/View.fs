@@ -154,7 +154,7 @@ module Talks =
     let private bastaLogo = Some "https://res.cloudinary.com/dzoukr/image/upload/v1611908339/dzoukr.cz/BASTA_2019_Logo_4c_52294_v1_zbh52v.png"
     let private ddaysLogo = Some "https://res.cloudinary.com/dzoukr/image/upload/c_scale,q_100,w_200/v1611909106/dzoukr.cz/dotnet-days-logo.png"
     let private devDaysLogo = Some "https://pbs.twimg.com/profile_images/982141167687974912/kaBQ0Odd.jpg"
-    let private twitchLogo = Some "https://assets.stickpng.com/thumbs/580b57fcd9996e24bc43c540.png"
+    let private twitchLogo = Some "https://res.cloudinary.com/dzoukr/image/upload/c_scale,q_100,w_200/v1612163006/dzoukr.cz/twitch.png"
     let private fsConfLogo = Some "https://res.cloudinary.com/dzoukr/image/upload/c_scale,q_100,w_300/v1611912585/dzoukr.cz/fsharpconf2020.png"
 
     let all = [
