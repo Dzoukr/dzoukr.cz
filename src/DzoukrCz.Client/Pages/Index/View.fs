@@ -184,8 +184,11 @@ let talkInfo (t:Talk) =
     let date = t.Date.ToString("dd. MM. yyyy")
     let now = DateTime.UtcNow
     let isPast = t.Date.Date < now.Date
-    let daysLeft = (t.Date.Date - now).TotalDays |> int
-    let startsInText = if daysLeft > 0 then $"Starts in {int daysLeft} days" else "Starts today!"
+    let daysLeft = (t.Date.Date - now).TotalDays
+    let startsInText =
+        if daysLeft > 1. then $"Starts in {int daysLeft} days"
+        else if daysLeft > 0. && daysLeft < 1. then "Starts tomorrow"
+        else "Starts today!"
 
     Bulma.card [
         if isPast then prop.className "is-past"
