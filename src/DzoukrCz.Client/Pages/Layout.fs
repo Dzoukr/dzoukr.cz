@@ -9,8 +9,8 @@ open DzoukrCz.Client.SharedView
 let icons =
     Html.divClassed "icons" [
         Html.faIconLink "fab fa-github fa-2x" "https://github.com/dzoukr"
-        Html.faIconLink "fab fa-twitter fa-2x" "https://twitter.com/rprovaznik"
-        Html.faIconLink "fab fa-linkedin fa-2x" "https://www.linkedin.com/in/rprovaznik/"
+        Html.faIconLink "fab fa-twitter fa-2x" "https://twitter.com/dzoukr"
+        Html.faIconLink "fab fa-linkedin fa-2x" "https://www.linkedin.com/in/dzoukr/"
     ]
 
 let footer =
@@ -51,8 +51,8 @@ let letfCol =
             Bulma.title.h2 "Contact"
             Html.div [
                 Html.faIconTextLink "fab fa-github" "https://github.com/dzoukr" "github.com/dzoukr" |> Html.div
-                Html.faIconTextLink "fab fa-twitter" "https://twitter.com/rprovaznik" "twitter.com/rprovaznik" |> Html.div
-                Html.faIconTextLink "fab fa-linkedin" "https://www.linkedin.com/in/rprovaznik/" "linkedin.com/in/rprovaznik" |> Html.div
+                Html.faIconTextLink "fab fa-twitter" "https://twitter.com/dzoukr" "twitter.com/dzoukr" |> Html.div
+                Html.faIconTextLink "fab fa-linkedin" "https://www.linkedin.com/in/dzoukr/" "linkedin.com/in/dzoukr" |> Html.div
             ]
         ]
         Bulma.block [
