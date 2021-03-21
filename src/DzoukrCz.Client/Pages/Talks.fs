@@ -1,122 +1,9 @@
-﻿module DzoukrCz.Client.Pages.Index.View
+﻿module DzoukrCz.Client.Pages.Talks
 
 open System
 open Feliz
 open Feliz.Bulma
 open DzoukrCz.Client.SharedView
-open DzoukrCz.Client.Pages.Layout
-
-type Project = {
-    Name : string
-    Url : string
-    Description : string
-    Logo : string option
-    Tags : string list
-}
-
-module Projects =
-    let cosmoStore = {
-        Name = "CosmoStore"
-        Url = "https://github.com/Dzoukr/CosmoStore"
-        Description = "F# Event store for Azure Cosmos DB, Table Storage, Postgres, LiteDB & ServiceStack"
-        Logo = Some "https://raw.githubusercontent.com/Dzoukr/CosmoStore/master/logo.png"
-        Tags = ["event store";"cosmos db"]
-    }
-
-    let dapperFSharp = {
-        Name = "Dapper.FSharp"
-        Url = "https://github.com/Dzoukr/Dapper.FSharp"
-        Description = "Lightweight F# extension for StackOverflow Dapper with support for MSSQL, MySQL and PostgreSQL"
-        Logo = Some "https://raw.githubusercontent.com/Dzoukr/Dapper.FSharp/master/logo.png"
-        Tags = ["mssql";"mysql";"postgres"]
-    }
-
-    let felizBulma = {
-        Name = "Feliz.Bulma"
-        Url = "https://github.com/Dzoukr/Feliz.Bulma"
-        Description = "Bulma UI wrapper for amazing Feliz DSL"
-        Logo = None
-        Tags = ["react";"fable";"css"]
-    }
-
-    let tablesFSharp = {
-        Name = "Tables.FSharp"
-        Url = "https://github.com/Dzoukr/Tables.FSharp"
-        Description = "Lightweight F# extension for the latest Azure.Data.Tables SDK"
-        Logo = Some "https://github.com/Dzoukr/Azure.Data.Tables.FSharp/raw/master/logo.png"
-        Tags = ["azure";"tables";"storage account"]
-    }
-
-    let yobo = {
-        Name = "Yobo"
-        Url = "https://github.com/Dzoukr/Yobo"
-        Description = "F# Yoga Class Booking System"
-        Logo = None
-        Tags = ["fable";"booking";"yoga"]
-    }
-
-    let safer = {
-        Name = "SAFEr.Template"
-        Url = "https://github.com/Dzoukr/SAFEr.Template"
-        Description = "Strongly opinionated modification of amazing SAFE Stack Template for full-stack development in F#"
-        Logo = None
-        Tags = ["dotnet";"fullstack";"template"]
-    }
-
-
-let projectInfo (p:Project) =
-    Bulma.card [
-        Bulma.cardContent [
-            prop.children [
-                Html.divClassed "project" [
-                    Bulma.block [
-                        if p.Logo.IsSome then
-                            Html.img [
-                                prop.style [ style.width 32; style.verticalAlign.bottom ]
-                                prop.src p.Logo.Value
-                            ]
-                        Bulma.title.h4 [
-                            Html.a [
-                                prop.href p.Url
-                                prop.text p.Name
-                            ]
-                        ]
-                    ]
-                    Bulma.block [
-                        Bulma.tags [
-                        for t in p.Tags do
-                            Bulma.tag [
-                                prop.text $"#{t}"
-                            ]
-                        ]
-                    ]
-                    Bulma.block [
-                        Html.text p.Description
-                    ]
-                ]
-
-            ]
-        ]
-    ]
-
-let projects =
-    let col c = Bulma.column [ column.is4Widescreen; column.is6Tablet; prop.children [ c ] ]
-    Html.divClassed "projects" [
-        Bulma.block [
-            Bulma.title.h2 "F# Projects"
-            Bulma.columns [
-                columns.isMultiline
-                prop.children [
-                    col (projectInfo Projects.cosmoStore)
-                    col (projectInfo Projects.dapperFSharp)
-                    col (projectInfo Projects.tablesFSharp)
-                    col (projectInfo Projects.felizBulma)
-                    col (projectInfo Projects.yobo)
-                    col (projectInfo Projects.safer)
-                ]
-            ]
-        ]
-    ]
 
 type TalkLang = CZ | EN
 
@@ -190,10 +77,18 @@ let talkInfo (t:Talk) =
         else if daysLeft > 0. && daysLeft < 1. then "Starts tomorrow"
         else "Starts today!"
 
+    let inLink (elm:ReactElement) =
+        if t.Link.IsSome then
+            Html.a [
+                prop.href t.Link.Value
+                prop.children [ elm ]
+            ]
+        else elm
+
     Bulma.card [
         if isPast then prop.className "is-past"
         prop.children [
-            Bulma.cardContent [
+            [
                 if not isPast then
                     Html.divClassed "talk-teaser" [
                         Bulma.tag [
@@ -207,14 +102,7 @@ let talkInfo (t:Talk) =
                         Html.img [
                             prop.src t.Logo.Value
                         ]
-                    Bulma.title.h5 [
-                        if t.Link.IsSome then
-                            Html.a [
-                                prop.href t.Link.Value
-                                prop.text t.Title
-                            ]
-                        else Html.text t.Title
-                    ]
+                    Bulma.title.h5 t.Title
                 ]
                 Html.div [
                     Html.divClassed "talk-event" [ Html.text t.Event ]
@@ -224,38 +112,65 @@ let talkInfo (t:Talk) =
                     ]
                 ]
             ]
+            |> React.fragment
+            |> inLink
+            |> Bulma.cardContent
         ]
     ]
 
+let contactMeTalk =
+    Bulma.card [
+        Bulma.cardContent [
+            Html.a [
+                prop.href "mailto:dzoukr@dzoukr.cz"
+                prop.children [
+                    Html.divClassed "talk-teaser" [
+                        Bulma.tag [
+                            tag.isMedium
+                            color.isInfo
+                            prop.text "Invite me to talk"
+                        ]
+                    ]
+                    Bulma.block [
+                        Html.divClassed "talk-icon" [
+                            Html.i [
+                                prop.className "fas fa-plus-circle"
+                            ]
+                        ]
+                        Bulma.title.h5 [
+                            Html.text "Next awesome talk you gonna love"
+                        ]
+                    ]
+                    Html.div [
+                        Html.divClassed "talk-event" [ Html.text "Your amazing conference" ]
+                        Html.divClassed "talk-date" [
+                            Html.faIcon "far fa-calendar-alt"
+                            Html.text "Bright future"
+                        ]
+                    ]
+                ]
+                ]
+            ]
+    ]
+
 [<ReactComponent>]
-let Talks () =
+let TalksView () =
     let talks = Talks.all |> List.sortByDescending (fun x -> x.Date)
+    let inCol elm = Bulma.column [ column.is3Widescreen; column.is6Tablet; prop.children [ elm ] ]
+    let future,past = talks |> List.partition (fun x -> x.Date > DateTime.UtcNow)
 
     Html.divClassed "talks" [
-        Bulma.block [
-            Bulma.title.h2 "Talks & Events"
-            Bulma.columns [
-                columns.isMultiline
-                prop.children [
-                    for t in talks do
-                        Bulma.column [
-                            column.is3Widescreen
-                            column.is6Tablet
-                            prop.children [ talkInfo t ]
-                        ]
+        Bulma.section [
+            Bulma.block [
+                Bulma.title.h1 "Talks & Events"
+                Bulma.columns [
+                    columns.isMultiline
+                    prop.children [
+                        yield! future |> List.map (talkInfo >> inCol)
+                        contactMeTalk |> inCol
+                        yield! past |> List.map (talkInfo >> inCol)
+                    ]
                 ]
             ]
         ]
     ]
-
-
-
-[<ReactComponent>]
-let IndexView () =
-    [
-        projects
-        Talks ()
-    ]
-    |> React.fragment
-    |> Bulma.box
-    |> basic

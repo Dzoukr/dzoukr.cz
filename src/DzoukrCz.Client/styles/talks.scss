@@ -1,4 +1,12 @@
 ﻿.talks {
+    div {
+        font-weight: initial;
+        color: initial;
+    }
+    a h5 {
+        color: $color-link;
+    }
+
     img {
         display: block;
         margin-left: auto;
@@ -14,6 +22,13 @@
         opacity: 1;
     }
 
+    .talk-icon {
+        @extend .is-flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+        font-size: 5rem;
+        color: $color-link;
+    }
     .talk-teaser {
         margin-bottom: 2rem;
         text-align: center;
@@ -28,10 +43,9 @@
         }
     }
     .card-content {
-        min-height: 19rem;
+        min-height: 18rem;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
-
 }

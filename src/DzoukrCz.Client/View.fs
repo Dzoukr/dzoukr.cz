@@ -1,18 +1,24 @@
 ﻿module DzoukrCz.Client.View
 
-open State
 open Feliz
-open Feliz.UseElmish
 open Router
 
 [<ReactComponent>]
 let AppView () =
-    let model, dispatch = React.useElmish(init, update, [| |])
-    let render =
-        match model.CurrentPage with
-        | Page.Index -> Pages.Index.View.IndexView ()
+    let page,setPage = React.useState(Router.currentPath() |> Page.parseFromUrlSegments)
+
+    // routing for full refreshed page (to fix wrong urls)
+    React.useEffectOnce (fun _ -> Router.navigatePage page)
+
+    let content =
+        match page with
+        | Page.AboutMe -> Pages.AboutMe.AboutMeView ()
+        | Page.Blog -> Html.text "BLOG"
+        | Page.Talks -> Pages.Talks.TalksView()
     React.router [
         router.pathMode
-        router.onUrlChanged (Page.parseFromUrlSegments >> UrlChanged >> dispatch)
-        router.children [ render ]
+        router.onUrlChanged (Page.parseFromUrlSegments >> setPage)
+        router.children [
+            content |> Pages.Layout.basic page
+        ]
     ]

@@ -4,15 +4,22 @@
 @import "~bulma";
 @import "~@creativebulma/bulma-divider";
 
+// colors
+$color-link: #126BA1;
+$color-link-lighter: #449DD3;
+$color-bg: white;
+$color-menu: #5195cf;
+
+@import "menu";
 @import "footer";
-@import "profile";
+@import "aboutMe";
 @import "icons";
 @import "projects";
 @import "talks";
 
 body {
     font-size: 18px;
-    background-color: #eef0f1;
+    background-color: $color-bg;
 }
 
 .box {
@@ -21,9 +28,9 @@ body {
 }
 
 a {
-    color: #126BA1;
+    color: $color-link;
     font-weight: 600;
 }
 a:hover {
-    color: #449DD3;
+    color: $color-link-lighter;
 }

@@ -1,7 +1,7 @@
 ﻿module DzoukrCz.Client.Server
 
 open Fable.Remoting.Client
-open DzoukrCz.Shared.Communication
+open DzoukrCz.Shared.API
 
 let service =
     Remoting.createApi()

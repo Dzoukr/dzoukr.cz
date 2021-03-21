@@ -1,9 +1,9 @@
 ﻿module DzoukrCz.Client.Pages.Layout
 
 open System
+open DzoukrCz.Client.Router
 open Feliz
 open Feliz.Bulma
-open Feliz.Bulma.Divider
 open DzoukrCz.Client.SharedView
 
 let icons =
@@ -25,68 +25,48 @@ let footer =
         ]
     ]
 
-let letfCol =
-    Html.divClassed "profile" [
-        Bulma.block [
-            Bulma.image [
-                prop.children [
-                    Html.img [
-                        prop.src "img/profile.png"
-                        image.isRounded
+
+
+let menu (p:Page) =
+    let isActive,setIsActive = React.useState(false)
+    let item (name:string) (mp:Page) =
+        Bulma.navbarItem.a [
+            prop.text name
+            prop.href mp
+            prop.onClick Router.goToUrl
+            if p = mp then navbarItem.isActive
+        ]
+
+    Bulma.navbar [
+        prop.children [
+            Bulma.container [
+                Bulma.navbarBrand.div [
+                    Bulma.navbarBurger [
+                        if isActive then navbarBurger.isActive
+                        prop.children ([1..3] |> List.map (fun _ -> Html.span []))
+                        prop.onClick (fun _ -> if isActive then setIsActive(false) else setIsActive(true))
                     ]
                 ]
-            ]
-        ]
-        Bulma.block [
-            Bulma.title "Roman Provazník"
-            Bulma.subtitle "F# |> I ❤️"
-        ]
-        Bulma.block [
-            Bulma.title.h2 "Bio"
-            Html.div [ prop.children [ Html.text "F# Team Leader @ "; Html.a [ prop.text "CN Group CZ"; prop.href "https://www.cngroup.dk" ] ] ]
-            Html.div [ prop.children [ Html.text "Founder @ "; Html.a [ prop.text "FSharping"; prop.href "https://fsharping.com" ] ] ]
-            Html.div "Speaker, melomaniac & terrible drummer"
-        ]
-        Bulma.block [
-            Bulma.title.h2 "Contact"
-            Html.div [
-                Html.faIconTextLink "fab fa-github" "https://github.com/dzoukr" "github.com/dzoukr" |> Html.div
-                Html.faIconTextLink "fab fa-twitter" "https://twitter.com/dzoukr" "twitter.com/dzoukr" |> Html.div
-                Html.faIconTextLink "fab fa-linkedin" "https://www.linkedin.com/in/dzoukr/" "linkedin.com/in/dzoukr" |> Html.div
-            ]
-        ]
-        Bulma.block [
-            Divider.divider [ divider.text "Home Team" ]
-            Html.divClassed "home-team" [
-                Html.a [
+
+                Bulma.navbarMenu [
+                    if isActive then navbarMenu.isActive
                     prop.children [
-                        Html.img [ prop.src "https://www.cngroup.dk/static/media/CN-logo-2019.d720839f.svg" ]
+                        Bulma.navbarEnd.div [
+                            item "About me" Page.AboutMe
+                            item "Blog" Page.Blog
+                            item "Talks & Events" Page.Talks
+                            item "Projects" Page.Projects
+                        ]
                     ]
-                    prop.href "https://www.cngroup.dk"
                 ]
             ]
         ]
     ]
 
-let basic (middle:ReactElement) =
+let basic page (middle:ReactElement) =
     [
-        Bulma.section [
-            Bulma.container [
-                Bulma.columns [
-                    prop.children [
-                        Bulma.column [
-                            column.isOneQuarterWidescreen
-                            column.isOneThirdTablet
-                            prop.children [
-                                Bulma.box [ letfCol ]
-                            ]
-                        ]
-                        Bulma.column [ middle ]
-                    ]
-                ]
-
-            ]
-        ]
+        menu page
+        [ middle ] |> Bulma.container
         footer
     ]
     |> React.fragment

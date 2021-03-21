@@ -3,7 +3,7 @@
 open Giraffe
 open Fable.Remoting.Server
 open Fable.Remoting.Giraffe
-open DzoukrCz.Shared.Communication
+open DzoukrCz.Shared.API
 open FSharp.Control.Tasks.V2
 
 let service = {

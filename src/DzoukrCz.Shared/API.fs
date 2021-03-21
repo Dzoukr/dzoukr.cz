@@ -1,4 +1,4 @@
-﻿module DzoukrCz.Shared.Communication
+﻿module DzoukrCz.Shared.API
 
 type Service = {
     GetMessage : unit -> Async<string>
