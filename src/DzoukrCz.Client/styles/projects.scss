@@ -1,14 +1,22 @@
 ﻿.projects {
+    img {
+        margin-right: 1rem;
+    }
+    h4 {
+        display: inline;
+    }
     .project {
-        img {
-            margin-right: 1rem;
-        }
-        h4 {
-            display: inline;
+        .card-content {
+            min-height: 16rem;
         }
     }
-    .card-content {
-        min-height: 16.5rem;
+    .project-community {
+        .card-content {
+            min-height: 33rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
     }
     margin-bottom: 2rem;
 }

@@ -53,7 +53,7 @@ let menu (p:Page) =
                     prop.children [
                         Bulma.navbarEnd.div [
                             item "About me" Page.AboutMe
-                            item "Blog" Page.Blog
+                            //item "Blog" Page.Blog
                             item "Talks & Events" Page.Talks
                             item "Projects" Page.Projects
                         ]

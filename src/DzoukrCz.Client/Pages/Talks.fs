@@ -113,15 +113,15 @@ let talkInfo (t:Talk) =
                 ]
             ]
             |> React.fragment
-            |> inLink
             |> Bulma.cardContent
+            |> inLink
         ]
     ]
 
 let contactMeTalk =
     Bulma.card [
-        Bulma.cardContent [
-            Html.a [
+        Html.a [
+            Bulma.cardContent [
                 prop.href "mailto:dzoukr@dzoukr.cz"
                 prop.children [
                     Html.divClassed "talk-teaser" [
@@ -149,8 +149,8 @@ let contactMeTalk =
                         ]
                     ]
                 ]
-                ]
             ]
+        ]
     ]
 
 [<ReactComponent>]

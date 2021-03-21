@@ -6,121 +6,6 @@ open Feliz
 open Feliz.Bulma
 open DzoukrCz.Client.SharedView
 
-type Project = {
-    Name : string
-    Url : string
-    Description : string
-    Logo : string option
-    Tags : string list
-}
-
-module Projects =
-    let cosmoStore = {
-        Name = "CosmoStore"
-        Url = "https://github.com/Dzoukr/CosmoStore"
-        Description = "F# Event store for Azure Cosmos DB, Table Storage, Postgres, LiteDB & ServiceStack"
-        Logo = Some "https://raw.githubusercontent.com/Dzoukr/CosmoStore/master/logo.png"
-        Tags = ["event store";"cosmos db"]
-    }
-
-    let dapperFSharp = {
-        Name = "Dapper.FSharp"
-        Url = "https://github.com/Dzoukr/Dapper.FSharp"
-        Description = "Lightweight F# extension for StackOverflow Dapper with support for MSSQL, MySQL and PostgreSQL"
-        Logo = Some "https://raw.githubusercontent.com/Dzoukr/Dapper.FSharp/master/logo.png"
-        Tags = ["mssql";"mysql";"postgres"]
-    }
-
-    let felizBulma = {
-        Name = "Feliz.Bulma"
-        Url = "https://github.com/Dzoukr/Feliz.Bulma"
-        Description = "Bulma UI wrapper for amazing Feliz DSL"
-        Logo = None
-        Tags = ["react";"fable";"css"]
-    }
-
-    let tablesFSharp = {
-        Name = "Tables.FSharp"
-        Url = "https://github.com/Dzoukr/Tables.FSharp"
-        Description = "Lightweight F# extension for the latest Azure.Data.Tables SDK"
-        Logo = Some "https://github.com/Dzoukr/Azure.Data.Tables.FSharp/raw/master/logo.png"
-        Tags = ["azure";"tables";"storage account"]
-    }
-
-    let yobo = {
-        Name = "Yobo"
-        Url = "https://github.com/Dzoukr/Yobo"
-        Description = "F# Yoga Class Booking System"
-        Logo = None
-        Tags = ["fable";"booking";"yoga"]
-    }
-
-    let safer = {
-        Name = "SAFEr.Template"
-        Url = "https://github.com/Dzoukr/SAFEr.Template"
-        Description = "Strongly opinionated modification of amazing SAFE Stack Template for full-stack development in F#"
-        Logo = None
-        Tags = ["dotnet";"fullstack";"template"]
-    }
-
-
-let projectInfo (p:Project) =
-    Bulma.card [
-        Bulma.cardContent [
-            prop.children [
-                Html.divClassed "project" [
-                    Bulma.block [
-                        if p.Logo.IsSome then
-                            Html.img [
-                                prop.style [ style.width 32; style.verticalAlign.bottom ]
-                                prop.src p.Logo.Value
-                            ]
-                        Bulma.title.h4 [
-                            Html.a [
-                                prop.href p.Url
-                                prop.text p.Name
-                            ]
-                        ]
-                    ]
-                    Bulma.block [
-                        Bulma.tags [
-                        for t in p.Tags do
-                            Bulma.tag [
-                                prop.text $"#{t}"
-                            ]
-                        ]
-                    ]
-                    Bulma.block [
-                        Html.text p.Description
-                    ]
-                ]
-
-            ]
-        ]
-    ]
-
-let projects =
-    let col c = Bulma.column [ column.is4Widescreen; column.is6Tablet; prop.children [ c ] ]
-    Html.divClassed "projects" [
-        Bulma.block [
-            Bulma.title.h2 "F# Projects"
-            Bulma.columns [
-                columns.isMultiline
-                prop.children [
-                    col (projectInfo Projects.cosmoStore)
-                    col (projectInfo Projects.dapperFSharp)
-                    col (projectInfo Projects.tablesFSharp)
-                    col (projectInfo Projects.felizBulma)
-                    col (projectInfo Projects.yobo)
-                    col (projectInfo Projects.safer)
-                ]
-            ]
-        ]
-    ]
-
-
-
-
 let leftCol =
     Html.divClassed "left-col" [
         Bulma.block [
@@ -132,6 +17,9 @@ let leftCol =
                     ]
                 ]
             ]
+        ]
+        Bulma.block [
+            Bulma.subtitle "F# |> I ❤️"
         ]
         Bulma.block [
             Html.div [

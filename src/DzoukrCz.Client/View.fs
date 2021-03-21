@@ -15,6 +15,7 @@ let AppView () =
         | Page.AboutMe -> Pages.AboutMe.AboutMeView ()
         | Page.Blog -> Html.text "BLOG"
         | Page.Talks -> Pages.Talks.TalksView()
+        | Page.Projects -> Pages.Projects.ProjectsView()
     React.router [
         router.pathMode
         router.onUrlChanged (Page.parseFromUrlSegments >> setPage)

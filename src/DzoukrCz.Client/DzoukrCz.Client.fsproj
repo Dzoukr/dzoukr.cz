@@ -10,6 +10,7 @@
         <Compile Include="Pages\Layout.fs" />
         <Compile Include="Pages\AboutMe.fs" />
         <Compile Include="Pages\Talks.fs" />
+        <Compile Include="Pages\Projects.fs" />
         <Compile Include="View.fs" />
         <Compile Include="App.fs" />
     </ItemGroup>
