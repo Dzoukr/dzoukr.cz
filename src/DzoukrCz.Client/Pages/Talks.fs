@@ -121,31 +121,33 @@ let talkInfo (t:Talk) =
 let contactMeTalk =
     Bulma.card [
         Html.a [
-            Bulma.cardContent [
-                prop.href "mailto:dzoukr@dzoukr.cz"
-                prop.children [
-                    Html.divClassed "talk-teaser" [
-                        Bulma.tag [
-                            tag.isMedium
-                            color.isInfo
-                            prop.text "Invite me to talk"
-                        ]
-                    ]
-                    Bulma.block [
-                        Html.divClassed "talk-icon" [
-                            Html.i [
-                                prop.className "fas fa-plus-circle"
+            prop.href "mailto:dzoukr@dzoukr.cz"
+            prop.children [
+                Bulma.cardContent [
+                    prop.children [
+                        Html.divClassed "talk-teaser" [
+                            Bulma.tag [
+                                tag.isMedium
+                                color.isInfo
+                                prop.text "Invite me to talk"
                             ]
                         ]
-                        Bulma.title.h5 [
-                            Html.text "Next awesome talk you gonna love"
+                        Bulma.block [
+                            Html.divClassed "talk-icon" [
+                                Html.i [
+                                    prop.className "fas fa-plus-circle"
+                                ]
+                            ]
+                            Bulma.title.h5 [
+                                Html.text "Next awesome talk you gonna love"
+                            ]
                         ]
-                    ]
-                    Html.div [
-                        Html.divClassed "talk-event" [ Html.text "Your amazing conference" ]
-                        Html.divClassed "talk-date" [
-                            Html.faIcon "far fa-calendar-alt"
-                            Html.text "Bright future"
+                        Html.div [
+                            Html.divClassed "talk-event" [ Html.text "Your amazing conference" ]
+                            Html.divClassed "talk-date" [
+                                Html.faIcon "far fa-calendar-alt"
+                                Html.text "Bright future"
+                            ]
                         ]
                     ]
                 ]
