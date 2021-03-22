@@ -1,1 +1,20 @@
-<!doctype html><html><head><title>Dzoukr.cz</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="shortcut icon" type="image/png" href="img/favicon.png"/><link href="style.vendors~app.5e87b3f613e6c97bf340.css" rel="stylesheet"><link href="style.app.5e87b3f613e6c97bf340.css" rel="stylesheet"></head><body><div id="safer-app"></div><script src="vendors~app.5e87b3f613e6c97bf340.js"></script><script src="app.5e87b3f613e6c97bf340.js"></script></body></html>
+<!doctype html><html><head><script>// Single Page Apps for GitHub Pages
+        // MIT License
+        // https://github.com/rafgraph/spa-github-pages
+        // This script checks to see if a redirect is present in the query string,
+        // converts it back into the correct url and adds it to the
+        // browser's history using window.history.replaceState(...),
+        // which won't cause the browser to attempt to load the new url.
+        // When the single page app is loaded further down in this file,
+        // the correct url will be waiting in the browser's history for
+        // the single page app to route accordingly.
+        (function(l) {
+            if (l.search[1] === '/' ) {
+                var decoded = l.search.slice(1).split('&').map(function(s) {
+                    return s.replace(/~and~/g, '&')
+                }).join('?');
+                window.history.replaceState(null, null,
+                    l.pathname.slice(0, -1) + decoded + l.hash
+                );
+            }
+        }(window.location))</script><title>Dzoukr.cz</title><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="shortcut icon" type="image/png" href="img/favicon.png"/><link href="style.vendors~app.e35fdd1697b565f727c2.css" rel="stylesheet"><link href="style.app.e35fdd1697b565f727c2.css" rel="stylesheet"></head><body><div id="safer-app"></div><script src="vendors~app.e35fdd1697b565f727c2.js"></script><script src="app.e35fdd1697b565f727c2.js"></script></body></html>
