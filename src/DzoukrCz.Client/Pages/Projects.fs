@@ -145,7 +145,7 @@ let fsharpConf =
             Html.div [
                 Bulma.block [
                     Html.img [
-                        prop.style [ style.width 128; style.verticalAlign.middle ]
+                        prop.style [ style.height 128; style.verticalAlign.middle ]
                         prop.src "img/fsharpconf.png"
                     ]
                     Bulma.title.h4 [
