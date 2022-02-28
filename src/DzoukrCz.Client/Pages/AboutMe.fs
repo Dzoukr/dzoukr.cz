@@ -34,7 +34,7 @@ let leftCol =
             Html.divClassed "home-team" [
                 Html.a [
                     prop.children [
-                        Html.img [ prop.src "https://www.cngroup.dk/static/media/CN-logo-2019.d720839f.svg" ]
+                        Html.img [ prop.src "https://www.cngroup.dk/static/media/CN_Group+Ciklum-logo-2021.b00bee63.svg" ]
                     ]
                     prop.href "https://www.cngroup.dk"
                 ]

@@ -63,8 +63,11 @@ module Talks =
         { Date = DateTime(2020,10,22); Logo = wugLogo; Event = "WUG Days 2020"; Title = "The state of F# in 2020"; Location = prg; Link = Some "https://wug.cz/zaznamy/686-WUG-Days-2020-F-v-roce-2020"; Lang = CZ }
         { Date = DateTime(2020,11,3); Logo = tmLogo; Event = "TopMonks Caffè"; Title = "Continuous Deployment on Azure"; Location = prg; Link = Some "https://www.youtube.com/watch?v=1_VKebxX-vU"; Lang = CZ }
         { Date = DateTime(2021,01,28); Logo = twitchLogo; Event = "Twitch Stream"; Title = "Fable Introduction with Zaid Ajaj"; Location = onl; Link = Some "https://www.twitch.tv/videos/891580510"; Lang = EN }
-        { Date = DateTime(2021,6,8); Logo = devDaysLogo; Event = "DevDays Europe 2021"; Title = "Functional .NET for Inevitable Success"; Location = vil; Link = Some "https://devdays.lt/roman-provaznik/"; Lang = EN }
         { Date = DateTime(2021,2,23); Logo = cnLogo; Event = "CN Group Webinar"; Title = "Speed up time to market delivery with the Functional Approach"; Location = onl; Link = Some "https://cngroup.clickmeeting.com/566151195/register"; Lang = EN }
+        { Date = DateTime(2021,6,9); Logo = devDaysLogo; Event = "DevDays Europe 2021"; Title = "Functional .NET for Inevitable Success"; Location = vil; Link = Some "https://devdays.lt/roman-provaznik/"; Lang = EN }
+        { Date = DateTime(2021,8,30); Logo = cnLogo; Event = "Functional Programming Evening"; Title = "F# vs Elm"; Location = zli; Link = None; Lang = CZ }
+        { Date = DateTime(2021,10,20); Logo = fsxLogo; Event = "FSharp eXchange 2021"; Title = "In defense of Exceptions: Throw (away) your Result"; Location = onl; Link = Some "https://skillsmatter.com/skillscasts/17243-in-defense-of-exceptions-throw-away-your-result"; Lang = EN }
+        { Date = DateTime(2022,2,3); Logo = wugLogo; Event = ".NET 6 Extravaganza"; Title = "Novinky v F#6"; Location = onl; Link = Some "https://wug.cz/online/akce/1410--NET-6-extravaganza-Novinky-v-F-6"; Lang = CZ }
     ]
 
 let talkInfo (t:Talk) =
