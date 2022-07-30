@@ -1,5 +1,5 @@
 #r "paket: groupref Build //"
-#load ".fake/build.fsx/intellisense.fsx"
+#load ".fake/build.fsx/intellisense_lazy.fsx"
 
 open System.IO
 open Fake.Core
