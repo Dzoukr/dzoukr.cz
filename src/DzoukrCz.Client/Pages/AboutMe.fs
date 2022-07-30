@@ -55,7 +55,7 @@ let rightCol =
         ]
         Bulma.block [
             Html.p [
-                Html.text "I am F# Team Leader / Architect at "
+                Html.text "I am Principal Technical Lead .NET / Architect at "
                 Html.a [ prop.text "CN Group CZ"; prop.href "https://www.cngroup.dk" ]
                 Html.text ", melomaniac, "
                 Html.a ("speaker", Page.Talks)
