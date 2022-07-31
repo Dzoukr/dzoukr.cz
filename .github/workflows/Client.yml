@@ -15,7 +15,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
 
-      - name: Setup .NET5 SDK
+      - name: Setup .NET 6 SDK
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: 6.0.100
@@ -24,7 +24,7 @@ jobs:
         run: dotnet tool restore
 
       - name: Build
-        run: dotnet fake build -t PublishClient
+        run: dotnet run Publish
 
       - name: Publish Client
         uses: actions/upload-artifact@v2

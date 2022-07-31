@@ -6,6 +6,10 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.Server", "src\Dzou
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.Shared", "src\DzoukrCz.Shared\DzoukrCz.Shared.fsproj", "{E264AE7C-45A3-4C82-A82E-724A32AFC859}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{8A4FC5AC-996E-4C36-823B-62C3EE82C47C}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Build", "Build.fsproj", "{7923837F-6004-4878-9F46-5A1AC2700A62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,7 +28,12 @@ Global
 		{E264AE7C-45A3-4C82-A82E-724A32AFC859}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E264AE7C-45A3-4C82-A82E-724A32AFC859}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E264AE7C-45A3-4C82-A82E-724A32AFC859}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7923837F-6004-4878-9F46-5A1AC2700A62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7923837F-6004-4878-9F46-5A1AC2700A62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7923837F-6004-4878-9F46-5A1AC2700A62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7923837F-6004-4878-9F46-5A1AC2700A62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{7923837F-6004-4878-9F46-5A1AC2700A62} = {8A4FC5AC-996E-4C36-823B-62C3EE82C47C}
 	EndGlobalSection
 EndGlobal

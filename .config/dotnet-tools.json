@@ -13,12 +13,6 @@
           "commands": [
               "fable"
           ]
-      },
-      "fake-cli": {
-          "version": "5.23.0-alpha002",
-          "commands": [
-              "fake"
-          ]
       }
   }
 }
