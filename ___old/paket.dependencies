@@ -1,27 +1,24 @@
-version 5.249.0
-
 source https://api.nuget.org/v3/index.json
-framework: net7.0
+framework: net6.0, netstandard2.0
 storage: none
 
 nuget Fable.Remoting.Giraffe
 nuget Giraffe
-nuget Giraffe.GoodRead
 nuget Microsoft.ApplicationInsights.AspNetCore
 
-nuget Fable.Core prerelease
+nuget Fable.Core
 nuget Fable.React
 nuget Fable.Remoting.Client
 nuget Feliz
-nuget Feliz.DaisyUI
+nuget Feliz.Bulma
+nuget Feliz.Bulma.Divider
 nuget Feliz.Router
-nuget Feliz.UseElmish
-
+nuget Feliz.UseDeferred
 nuget FsToolkit.ErrorHandling.TaskResult
 
 group Build
     source https://api.nuget.org/v3/index.json
-    framework: net7.0
+    framework: net6.0
     storage: none
 
     nuget FSharp.Core

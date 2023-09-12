@@ -1,21 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Server.fs" />
         <Compile Include="Router.fs" />
-        <Compile Include="SharedView.fs" />
-        <Compile Include="Pages\Layout.fs" />
-        <Compile Include="Pages\AboutMe.fs" />
-        <Compile Include="Pages\Talks.fs" />
-        <Compile Include="Pages\Projects.fs" />
+        <Compile Include="Server.fs" />
+        <Compile Include="Extensions.fs" />
+        <Compile Include="Pages\Index.fs" />
         <Compile Include="View.fs" />
         <Compile Include="App.fs" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\DzoukrCz.Shared\DzoukrCz.Shared.fsproj" />
+        <Compile Include="TalksData.fs" />
     </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
