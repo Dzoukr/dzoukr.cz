@@ -65,7 +65,7 @@ let private Navbar (currentPage:Page) =
             Daisy.navbarEnd [
                 Html.divClassed "flex gap-2 hidden lg:flex" [
                     // btn "Blog" "fa-solid fa-blog" Page.Contact
-                    btn "Talks & Events" "fa-solid fa-microphone" Page.Talks
+                    btn "Talks & Events" "fa-solid fa-podcast" Page.Talks
                     // btn "Projects" "fa-solid fa-project-diagram" Page.Contact
                     btn "Contact" "fa-solid fa-envelope" Page.Contact
                 ]
@@ -73,11 +73,7 @@ let private Navbar (currentPage:Page) =
         ]
     ]
 
-
-
-[<ReactComponent>]
-let private MainLayout state dispatch =
-
+let private footer =
     let iconLink (icon:string) (text:string) (href:string) =
         Html.divClassed "flex gap-1 items-center" [
             Html.faIcon icon
@@ -87,6 +83,32 @@ let private MainLayout state dispatch =
             ]
         ]
 
+    Daisy.footer [
+        prop.className (padding + "p-5 bg-neutral text-neutral-content")
+        prop.children [
+
+            Html.nav [
+                Html.p "Roman \"Džoukr\" Provazník"
+                Html.p [ prop.text "Building software with ❤️ + 🧠"; prop.className "text-xs opacity-90" ]
+            ]
+            Html.nav [
+                Daisy.footerTitle "Projects"
+                iconLink "fa-solid fa-podcast" "PodVocasem" "https://www.podvocasem.cz"
+                // iconLink "fa-brands fa-twitter" "FSharping" "https://twitter.com/fsharping"
+                iconLink "fa-solid fa-code" "fsharpConf" "https://fsharpconf.com"
+            ]
+            Html.nav [
+                Daisy.footerTitle "Social"
+                iconLink "fa-brands fa-twitter" "@dzoukr" "https://twitter.com/dzoukr"
+                iconLink "fa-brands fa-github" "dzoukr" "https://github.com/dzoukr"
+                iconLink "fa-brands fa-linkedin" "Roman Provazník" "https://www.linkedin.com/in/dzoukr/"
+            ]
+        ]
+    ]
+
+[<ReactComponent>]
+let private MainLayout state dispatch =
+
     Daisy.drawer [
         prop.children [
             Daisy.drawerToggle [ prop.id "drawer" ]
@@ -95,33 +117,12 @@ let private MainLayout state dispatch =
                 prop.children [
                     Navbar state.Page
                     Html.divClassed (padding + "grow") [
-                        Html.div (string state.Page)
-                        // yield! [1..10] |> List.map (fun x -> Html.br [])
+                        match state.Page with
+                        | Page.Index -> Pages.Index.IndexView ()
+                        | Talks -> Html.div "TODO"
+                        | Contact -> Html.div "TODO"
                     ]
-                    Daisy.footer [
-                        prop.className (padding + "p-5 bg-neutral text-neutral-content")
-                        prop.children [
-
-                            Html.nav [
-                                Html.p "Roman \"Džoukr\" Provazník"
-                                Html.p [ prop.text "Building software with ❤️ + 🧠"; prop.className "text-xs opacity-90" ]
-
-                            ]
-                            Html.nav [
-                                Daisy.footerTitle "Projects"
-                                iconLink "fa-solid fa-podcast" "PodVocasem" "https://www.podvocasem.cz"
-                                // iconLink "fa-brands fa-twitter" "FSharping" "https://twitter.com/fsharping"
-                                iconLink "fa-solid fa-code" "fsharpConf" "https://fsharpconf.com"
-                            ]
-                            Html.nav [
-                                Daisy.footerTitle "Social"
-                                iconLink "fa-brands fa-twitter" "@dzoukr" "https://twitter.com/dzoukr"
-                                iconLink "fa-brands fa-github" "Dzoukr" "https://github.com/dzoukr"
-                                iconLink "fa-brands fa-linkedin" "Roman Provazník" "https://www.linkedin.com/in/dzoukr/"
-                            ]
-
-                        ]
-                    ]
+                    footer
                 ]
             ]
             Daisy.drawerSide [
