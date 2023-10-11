@@ -9,7 +9,7 @@ nuget Giraffe
 nuget Giraffe.GoodRead
 nuget Microsoft.ApplicationInsights.AspNetCore
 
-nuget Fable.Core prerelease
+nuget Fable.Core
 nuget Fable.React
 nuget Fable.Remoting.Client
 nuget Feliz

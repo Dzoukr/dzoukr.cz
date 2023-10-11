@@ -12,5 +12,8 @@
         <Compile Include="App.fs" />
         <Compile Include="TalksData.fs" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\DzoukrCz.Shared\DzoukrCz.Shared.fsproj" />
+    </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

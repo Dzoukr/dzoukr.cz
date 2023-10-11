@@ -25,6 +25,7 @@ type Html
                 prop.children elm
             ]
         static member inline divClassed (cn:string) (elm:ReactElement list) = Html.classed Html.div cn elm
+        static member inline faIcon (cn:string) = Html.i [ prop.className cn ]
 
 module Cmd =
     open Elmish
