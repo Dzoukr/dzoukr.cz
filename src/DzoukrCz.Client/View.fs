@@ -55,7 +55,8 @@ let private Navbar (currentPage:Page) =
                 ]
                 Daisy.button.label [
                     button.ghost
-                    prop.text "Roman Provazník"
+                    prop.className "normal-case"
+                    prop.text "Roman \"Džoukr\" Provazník"
                     yield! prop.hrefRouted Page.Index
                 ]
             ]
@@ -65,6 +66,7 @@ let private Navbar (currentPage:Page) =
             Daisy.navbarEnd [
                 Html.divClassed "flex gap-2 hidden lg:flex" [
                     // btn "Blog" "fa-solid fa-blog" Page.Contact
+                    btn "About me" "fa-solid fa-user" Page.Index
                     btn "Talks & Events" "fa-solid fa-podcast" Page.Talks
                     // btn "Projects" "fa-solid fa-project-diagram" Page.Contact
                     btn "Contact" "fa-solid fa-envelope" Page.Contact

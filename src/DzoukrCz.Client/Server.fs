@@ -1,5 +1,6 @@
 ﻿module DzoukrCz.Client.Server
 
+open DzoukrCz.Shared.Stats.API
 open Fable.SimpleJson
 open Fable.Remoting.Client
 
@@ -23,3 +24,8 @@ module Cmd =
     module OfAsync =
         let eitherAsResult fn resultMsg =
             Cmd.OfAsync.either fn () (Result.Ok >> resultMsg) (exnToError >> Result.Error >> resultMsg)
+
+let statsAPI =
+    Remoting.createApi()
+    |> Remoting.withRouteBuilder StatsAPI.RouteBuilder
+    |> Remoting.buildProxy<StatsAPI>

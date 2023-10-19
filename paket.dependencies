@@ -8,6 +8,10 @@ nuget Fable.Remoting.Giraffe
 nuget Giraffe
 nuget Giraffe.GoodRead
 nuget Microsoft.ApplicationInsights.AspNetCore
+nuget Azure.Storage.Blobs
+nuget Azure.Data.Tables
+nuget Tables.FSharp
+nuget FSharp.Control.AsyncSeq
 
 nuget Fable.Core
 nuget Fable.React

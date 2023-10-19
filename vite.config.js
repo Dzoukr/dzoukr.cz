@@ -9,10 +9,11 @@ export default defineConfig({
         port: 8080,
         proxy: {
             '/api': 'http://localhost:5000',
+            '/media': 'http://localhost:5000'
         }
     },
     build: {
-        outDir:"../../publish/app"
+        outDir:"../../publish/app/public"
     }
 
 })
