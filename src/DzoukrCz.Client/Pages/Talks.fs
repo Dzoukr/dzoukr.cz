@@ -12,6 +12,7 @@ open DzoukrCz.Client
 
 type private State = {
     Talks : Response.Talk list
+    IsLoading : bool
 }
 
 type private Msg =
@@ -21,13 +22,14 @@ type private Msg =
 let private init () =
     {
         Talks = []
+        IsLoading = false
     }, Cmd.ofMsg LoadTalks
 
 let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
     match msg with
-    | LoadTalks -> state, Cmd.OfAsync.eitherAsResult (fun _ -> talksAPI.GetTalks()) TalksLoaded
-    | TalksLoaded (Ok talks) -> { state with Talks = talks }, Cmd.none
-    | TalksLoaded (Error _) -> state, Cmd.none
+    | LoadTalks -> { state with IsLoading = true }, Cmd.OfAsync.eitherAsResult (fun _ -> talksAPI.GetTalks()) TalksLoaded
+    | TalksLoaded (Ok talks) -> { state with IsLoading = false; Talks = talks }, Cmd.none
+    | TalksLoaded (Error _) -> { state with IsLoading = false }, Cmd.none
 
 let private talkCard (t:Response.Talk) =
     let isFuture = t.Date > DateTime.Now
@@ -101,6 +103,42 @@ let private talkCard (t:Response.Talk) =
         ]
     ]
 
+let private loadingTalk =
+    Daisy.card [
+        prop.className $"shadow w-80 animate-pulse"
+        card.bordered
+        card.compact
+        prop.children [
+            Daisy.cardBody [
+                Daisy.cardTitle [
+                    prop.className "w-48 bg-slate-200 rounded"
+                    prop.dangerouslySetInnerHTML "&nbsp;"
+                ]
+                Html.p [
+                    prop.className "text-lg h-6 w-32 bg-slate-200 rounded"
+                    prop.dangerouslySetInnerHTML "&nbsp;"
+                ]
+                Html.p [
+                    prop.className "text-lg h-4 w-36 bg-slate-200 rounded"
+                    prop.dangerouslySetInnerHTML "&nbsp;"
+                ]
+                Html.p [
+                    prop.className "text-lg h-4 w-36 bg-slate-200 rounded"
+                    prop.dangerouslySetInnerHTML "&nbsp;"
+                ]
+                Daisy.cardActions [
+                    prop.className "flex flex-row self-end w-16"
+                    prop.children [
+                        Html.p [
+                            prop.className "text-lg w-8 bg-slate-200 rounded"
+                            prop.dangerouslySetInnerHTML "&nbsp;"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+
 [<ReactComponent>]
 let TalksView () =
     let state, dispatch = React.useElmish(init, update, [| |])
@@ -113,10 +151,14 @@ let TalksView () =
 
         ]
         Html.divClassed "flex flex-row gap-8 flex-wrap justify-center lg:justify-start" [
-            yield!
-                state.Talks
-                |> List.sortByDescending (fun x -> x.Date)
-                |> List.map talkCard
+            if state.IsLoading then
+                yield! [1..8 ] |> List.map (fun _ -> loadingTalk)
+            else
+                yield!
+                    state.Talks
+                    |> List.sortByDescending (fun x -> x.Date)
+                    |> List.map talkCard
+
         ]
     ]
 

@@ -32,7 +32,6 @@ let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
 let private stats (state:State) =
     let years = DateTimeOffset.Now.Year - 2000
     Daisy.stats [
-        //if isVertical then stats.vertical
         prop.className "shadow w-full"
         prop.children [
             Daisy.stat [
@@ -43,29 +42,44 @@ let private stats (state:State) =
                 Daisy.statValue years
                 Daisy.statDesc "and counting..."
             ]
-            Daisy.stat [
-                Daisy.statFigure [
-                    Html.faIcon "fa-solid fa-microphone fa-2x opacity-80"
+            Html.a [
+                yield! prop.hrefRouted Page.Talks
+                prop.children [
+                    Daisy.stat [
+                        Daisy.statFigure [
+                            Html.faIcon "fa-solid fa-microphone fa-2x opacity-80"
+                        ]
+                        Daisy.statTitle "Public talks"
+                        Daisy.statValue state.Stats.Talks
+                        Daisy.statDesc "online, offline"
+                    ]
                 ]
-                Daisy.statTitle "Public talks"
-                Daisy.statValue state.Stats.Talks
-                Daisy.statDesc "online, offline"
             ]
-            Daisy.stat [
-                Daisy.statFigure [
-                    Html.faIcon "fa-solid fa-podcast fa-2x opacity-80"
+            Html.a [
+                prop.href "https://www.podvocasem.cz"
+                prop.children [
+                    Daisy.stat [
+                        Daisy.statFigure [
+                            Html.faIcon "fa-solid fa-podcast fa-2x opacity-80"
+                        ]
+                        Daisy.statTitle "Episodes"
+                        Daisy.statValue state.Stats.Episodes
+                        Daisy.statDesc "PodVocasem podcast"
+                    ]
                 ]
-                Daisy.statTitle "Episodes"
-                Daisy.statValue state.Stats.Episodes
-                Daisy.statDesc "PodVocasem podcast"
             ]
-            Daisy.stat [
-                Daisy.statFigure [
-                    Html.faIcon "fa-brands fa-github fa-2x opacity-80"
+            Html.a [
+                prop.href "https://www.nuget.org/profiles/dzoukr"
+                prop.children [
+                    Daisy.stat [
+                        Daisy.statFigure [
+                            Html.faIcon "fa-brands fa-github fa-2x opacity-80"
+                        ]
+                        Daisy.statTitle "Total downloads"
+                        Daisy.statValue state.Stats.Downloads
+                        Daisy.statDesc "of 34 packages"
+                    ]
                 ]
-                Daisy.statTitle "Total downloads"
-                Daisy.statValue state.Stats.Downloads
-                Daisy.statDesc "of 34 packages"
             ]
         ]
     ]
