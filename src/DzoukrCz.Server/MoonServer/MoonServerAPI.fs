@@ -8,7 +8,7 @@ open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
 open Newtonsoft.Json.Linq
 
-type PublishRequest = {
+type PublishData = {
     metadata : JObject
     content : string
     name : string
@@ -20,6 +20,12 @@ let private toKeyValue (j:JObject) =
     j.Properties()
     |> Seq.map (fun v -> v.Name, v.Value)
     |> Seq.toList
+
+let private fromKeyValue (data:(string * JToken) list) =
+    let j = JObject()
+    for (k,v) in data do
+        j.Add(k,v)
+    j
 
 let private tryFindId (data:(string * JToken) list) =
     data
@@ -33,7 +39,7 @@ let private tryFindId (data:(string * JToken) list) =
 
 let private publish (i:string option) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
     task {
-        let! j = ctx.BindJsonAsync<PublishRequest>()
+        let! j = ctx.BindJsonAsync<PublishData>()
         let metadata = j.metadata |> toKeyValue
         let attachments = j.attachments |> toKeyValue |> List.map (fun (k,v) -> k, v.Value<string>())
         let pubId = i |> Option.orElse (tryFindId metadata) |> Option.defaultWith (fun _ -> Guid.NewGuid().ToString("N"))
@@ -41,19 +47,55 @@ let private publish (i:string option) (publisher:Publisher) (next:HttpFunc) (ctx
         return! json {| id = pubId |} next ctx
     }
 
-let private unpublish (pubId:string) (next:HttpFunc) (ctx:HttpContext) =
+let private unpublish (pubId:string) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
     task {
+        let! _ = publisher.Unpublish(pubId)
         return! json {| id = null |} next ctx
     }
+
+let private detail (pubId:string) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
+    task {
+        match! publisher.TryDetail(pubId) with
+        | Some v ->
+            let data =
+                {
+                    metadata = v.Metadata |> fromKeyValue
+                    content = v.Content
+                    name = v.Name
+                    path = v.Path
+                    attachments = JObject.FromObject(obj())
+                }
+            return! json data next ctx
+        | None ->
+            ctx.SetStatusCode 404
+            return Some ctx
+    }
+
+let private onlyWithKeyAndSecret (p:Publisher) : HttpHandler =
+    fun (next:HttpFunc) (ctx:HttpContext) ->
+        task {
+            match ctx.TryGetRequestHeader("Api-Key"), ctx.TryGetRequestHeader("Api-Secret") with
+            | Some key, Some secret ->
+                if key = p.ApiKey && secret = p.ApiSecret then
+                    return! next ctx
+                else
+                    ctx.SetStatusCode 401
+                    return Some ctx
+            | _ ->
+                ctx.SetStatusCode 401
+                return Some ctx
+        }
 
 let api : HttpHandler =
     Require.services<ILogger<_>, Publisher> (fun logger publisher ->
         subRouteCi "/moonserver" (
             choose [
-                POST >=> routeCif "/publish/%s"  (fun (s:string) -> publish (Some s) publisher)
-                POST >=> routeCi "/publish" >=> publish None publisher
-                POST >=> routeCif "/unpublish/%s" (fun (s:string) -> unpublish s)
-                GET >=> routeCif "/detail/%s" (fun (s:string) -> text $"detail {s}")
+                POST >=> onlyWithKeyAndSecret publisher >=> choose [
+                    routeCif "/unpublish/%s" (fun (s:string) -> unpublish s publisher)
+                    routeCif "/publish/%s"  (fun (s:string) -> publish (Some s) publisher)
+                    routeCi "/publish" >=> publish None publisher
+                ]
+                GET >=> routeCif "/detail/%s" (fun (s:string) -> detail s publisher)
             ]
         )
     )

@@ -24,6 +24,8 @@ let private configureWeb (builder:WebApplicationBuilder) =
     let tableName = builder.Configuration.["TableName"]
     let containerName = builder.Configuration.["ContainerName"]
     let pathPrefix = builder.Configuration.["PathPrefix"]
+    let apiKey = builder.Configuration.["ApiKey"]
+    let apiSecret = builder.Configuration.["ApiSecret"]
 
     // because of MoonServer
     builder.Services.AddCors(fun opts ->
@@ -42,6 +44,8 @@ let private configureWeb (builder:WebApplicationBuilder) =
             TableName = tableName
             ContainerName = containerName
             PathPrefix = pathPrefix
+            ApiKey = apiKey
+            ApiSecret = apiSecret
         })
         |> ignore
     builder.Services.AddSingleton<BlobFileProvider>(BlobFileProvider(BlobContainerClient(storageConnectionString, containerName))) |> ignore

@@ -1,6 +1,8 @@
 module DzoukrCz.Server.MoonServer.StoragePublisher
 
 open System
+open System.Collections.Generic
+open System.Threading.Tasks
 open Azure.Data.Tables
 open Azure.Data.Tables.FSharp
 open Azure.Storage.Blobs
@@ -146,13 +148,34 @@ module TableStorage =
             let name = $"meta_{k}"
             entity.Add(name, v.ToString(Formatting.None))
         entity
+    let toData (e:TableEntity) : PublishData =
+        let meta =
+            (e :> IDictionary<string,obj>)
+            |> Seq.filter (fun x -> x.Key.StartsWith("meta_"))
+            |> Seq.map (fun x ->
+                let key = x.Key.Replace("meta_", "")
+                let value = x.Value.ToString()
+                key, JToken.Parse(value)
+            )
+            |> Seq.toList
+            |> List.append [("id", JValue(e.PartitionKey))]
 
+        {
+            Id = e.PartitionKey
+            Name = e.GetString("Name")
+            Path = e.GetString("Path")
+            Content = e.GetString("Content")
+            Metadata = meta
+            Attachments = []
+        }
 
 type Configuration = {
     ConnectionString : string
     TableName : string
     ContainerName : string
     PathPrefix : string
+    ApiKey : string
+    ApiSecret :string
 }
 with
     member this.SafeContainerName = this.ContainerName |> key
@@ -187,6 +210,9 @@ type Publisher(cfg:Configuration) =
                 ()
         }
 
+    member _.ApiKey = cfg.ApiKey
+    member _.ApiSecret = cfg.ApiSecret
+
     member _.Publish(data:PublishData) =
         task {
             // table
@@ -201,4 +227,39 @@ type Publisher(cfg:Configuration) =
             do! cleanContainer data.Id
             do! uploadFiles data.Id replaces
             return ()
+        }
+    member _.Unpublish(i:string) =
+        task {
+            // table
+            let! _ = tableClient.CreateIfNotExistsAsync()
+            let! _ = tableClient.DeleteEntityAsync(key i, key i)
+            // blobs
+            let! _ = blobClient.CreateIfNotExistsAsync()
+            do! cleanContainer i
+            return ()
+        }
+
+    member _.TryDetail (i:string) =
+        task {
+            let! _ = tableClient.CreateIfNotExistsAsync()
+            let k = i |> key
+            return
+                tableQuery {
+                    filter (pk k + rk k)
+                }
+                |> tableClient.Query<TableEntity>
+                |> Seq.map TableStorage.toData
+                |> Seq.tryHead
+        }
+
+    member _.FindByMetadataEq (name:string, value:JToken) : Task<PublishData list> =
+        task {
+            let! _ = tableClient.CreateIfNotExistsAsync()
+            return
+                tableQuery {
+                    filter (eq $"meta_{name}" (value.ToString(Formatting.None)))
+                }
+                |> tableClient.Query<TableEntity>
+                |> Seq.map TableStorage.toData
+                |> Seq.toList
         }

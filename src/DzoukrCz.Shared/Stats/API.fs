@@ -6,6 +6,12 @@ module Response =
         Episodes : string
         Downloads : string
     }
+    module IndexStats =
+        let init = {
+            Talks = "26"
+            Episodes = "40"
+            Downloads = "611k+"
+        }
 
 type StatsAPI = {
     GetStats : unit -> Async<Response.IndexStats>

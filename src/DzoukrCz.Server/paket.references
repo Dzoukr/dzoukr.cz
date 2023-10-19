@@ -7,3 +7,4 @@ Azure.Storage.Blobs
 Azure.Data.Tables
 Tables.FSharp
 FSharp.Control.AsyncSeq
+Markdig

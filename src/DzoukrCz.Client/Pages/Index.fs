@@ -20,11 +20,7 @@ type private Msg =
 
 let private init () =
     {
-        Stats = {
-            Talks = "26"
-            Episodes = "40"
-            Downloads = "611k+"
-        }
+        Stats = Response.IndexStats.init
     }, Cmd.ofMsg LoadStats
 
 let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
