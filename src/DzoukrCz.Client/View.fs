@@ -23,12 +23,11 @@ let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
 
 let private padding = "px-4 lg:px-64 "
 
-[<ReactComponent>]
-let private Navbar (currentPage:Page) =
-
+let private menuLinks (currentPage:Page) =
     let btn (text:string) (icon:string) (nextPage:Page) =
         let isActive = currentPage = nextPage
-        Daisy.button.label [
+        Daisy.button.a [
+            prop.className "content-center"
             button.ghost
             if isActive then color.textInfo
             prop.children [
@@ -37,6 +36,15 @@ let private Navbar (currentPage:Page) =
             ]
             yield! prop.hrefRouted nextPage
         ]
+    [
+        btn "About me" "fa-solid fa-user" Page.Index
+        btn "Talks & Events" "fa-solid fa-podcast" Page.Talks
+    ]
+
+[<ReactComponent>]
+let private Navbar (currentPage:Page) =
+
+
 
     Daisy.navbar [
         color.textNeutralContent
@@ -65,9 +73,11 @@ let private Navbar (currentPage:Page) =
             ]
             Daisy.navbarEnd [
                 Html.divClassed "flex gap-2 hidden lg:flex" [
+                    yield! menuLinks currentPage
+
                     // btn "Blog" "fa-solid fa-blog" Page.Contact
-                    btn "About me" "fa-solid fa-user" Page.Index
-                    btn "Talks & Events" "fa-solid fa-podcast" Page.Talks
+                    // btn "About me" "fa-solid fa-user" Page.Index
+                    // btn "Talks & Events" "fa-solid fa-podcast" Page.Talks
                     // btn "Projects" "fa-solid fa-project-diagram" Page.Contact
                     // btn "Contact" "fa-solid fa-envelope" Page.Contact
                 ]
@@ -134,10 +144,15 @@ let private MainLayout state dispatch =
                     Html.aside [
                         prop.className "w-80 h-screen border-r border-base-300 bg-base-100"
                         prop.children [
-                            // // ctxMenu
-                            // state.CurrentWorkspace
-                            // |> Option.map (leftMenu page)
-                            // |> Option.defaultValue Html.none
+                            Daisy.menu [
+                                prop.children [
+                                    for m in menuLinks state.Page do
+                                        Html.li [
+                                            //prop.className "flex flex-grow content-center"
+                                            prop.children m
+                                        ]
+                                ]
+                            ]
                         ]
                     ]
 

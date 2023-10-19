@@ -4,6 +4,7 @@ open System
 open System.IO
 open Azure.Storage.Blobs
 open Microsoft.Extensions.FileProviders
+open Microsoft.Extensions.Caching.Memory
 
 let private tryGetProperties (b:BlobClient) =
     if b.Exists().Value then b.GetProperties().Value |> Some
@@ -21,11 +22,17 @@ let private blobToFileInfo (b:BlobClient) : IFileInfo =
         member this.CreateReadStream () = maybeProps |> Option.map (fun _ -> b.OpenRead()) |> Option.defaultValue Stream.Null
     }
 
-type BlobFileProvider (container:BlobContainerClient) =
+type BlobFileProvider (container:BlobContainerClient, cache:IMemoryCache) =
+
     interface IFileProvider with
         member this.GetDirectoryContents _ = raise (NotImplementedException())
         member this.GetFileInfo(subpath) =
             let path = subpath.TrimStart('/').TrimEnd('/')
-            let blob = container.GetBlobClient(path)
-            blob |> blobToFileInfo
+            match cache.TryGetValue<IFileInfo> path with
+            | true, fileInfo -> fileInfo
+            | false, _ ->
+                let blob = container.GetBlobClient(path)
+                let fi = blob |> blobToFileInfo
+                cache.Set(path, fi, TimeSpan.FromDays 1)
+
         member this.Watch _ = raise (NotImplementedException())

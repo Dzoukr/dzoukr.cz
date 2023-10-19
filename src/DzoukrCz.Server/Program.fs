@@ -48,8 +48,10 @@ let private configureWeb (builder:WebApplicationBuilder) =
             ApiSecret = apiSecret
         })
         |> ignore
-    builder.Services.AddSingleton<BlobFileProvider>(BlobFileProvider(BlobContainerClient(storageConnectionString, containerName))) |> ignore
+    builder.Services.AddSingleton<BlobContainerClient>(BlobContainerClient(storageConnectionString, containerName)) |> ignore
+    builder.Services.AddSingleton<BlobFileProvider>() |> ignore
     builder.Services.AddScoped<Publisher>() |> ignore
+    builder.Services.AddMemoryCache() |> ignore
     builder
 
 let private configureApp (app:WebApplication) =
