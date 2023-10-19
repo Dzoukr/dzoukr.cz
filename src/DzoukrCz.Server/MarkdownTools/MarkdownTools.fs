@@ -1,5 +1,6 @@
 module DzoukrCz.Server.MarkdownTools.MarkdownTools
 
+open System
 open System.Collections.Generic
 open System.IO
 open Markdig
@@ -39,11 +40,30 @@ type TableReader(dic:Dictionary<int, string []>) =
         |> Array.mapi (fun i x -> x, i)
         |> dict
 
-    member this.GetCellValue(rowIndex:int, cellName:string) =
-        let index = cellIndexes.[cellName]
-        dic.[rowIndex + 1].[index]
 
-    member this.GetRowValues (i:int) = dic.[i]
+    member this.TryGetCellValue(rowIndex:int, cellName:string) =
+        match cellIndexes.ContainsKey(cellName) with
+        | false -> None
+        | true ->
+            let index = cellIndexes.[cellName]
+            Some (dic.[rowIndex + 1].[index])
+
+    member this.GetCellValueOrEmpty(rowIndex:int, cellName:string) =
+        match this.TryGetCellValue(rowIndex, cellName) with
+        | None -> String.Empty
+        | Some x -> x
+
+    member this.TryGetDataRows () =
+        [0 .. dic.Count - 2]
+        |> List.map (fun i ->
+            fun name -> this.TryGetCellValue(i, name)
+        )
+
+    member this.GetDataRowsOrEmpty () =
+        [0 .. dic.Count - 2]
+        |> List.map (fun i ->
+            fun name -> this.GetCellValueOrEmpty(i, name)
+        )
 
 let findTables (md:string) : TableReader list =
     let doc = Markdown.Parse(md, pipeline)
@@ -51,3 +71,11 @@ let findTables (md:string) : TableReader list =
     |> Seq.map tableToDict
     |> Seq.map TableReader
     |> Seq.toList
+
+let trySrcAndAlt (md:string) =
+    let doc = Markdown.Parse(md, pipeline)
+    doc.Descendants<LinkInline>()
+    |> Seq.tryHead
+    |> Option.map (fun x ->
+        x.Url, x.Title
+    )

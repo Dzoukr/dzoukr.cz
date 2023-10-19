@@ -69,7 +69,7 @@ let private Navbar (currentPage:Page) =
                     btn "About me" "fa-solid fa-user" Page.Index
                     btn "Talks & Events" "fa-solid fa-podcast" Page.Talks
                     // btn "Projects" "fa-solid fa-project-diagram" Page.Contact
-                    btn "Contact" "fa-solid fa-envelope" Page.Contact
+                    // btn "Contact" "fa-solid fa-envelope" Page.Contact
                 ]
             ]
         ]
@@ -121,7 +121,7 @@ let private MainLayout state dispatch =
                     Html.divClassed (padding + "grow") [
                         match state.Page with
                         | Page.Index -> Pages.Index.IndexView ()
-                        | Talks -> Html.div "TODO"
+                        | Talks -> Pages.Talks.TalksView ()
                         | Contact -> Html.div "TODO"
                     ]
                     footer

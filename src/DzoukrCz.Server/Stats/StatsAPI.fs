@@ -28,9 +28,9 @@ let private getStats (publisher:Publisher) () : Task<Response.IndexStats> =
                 |> List.tryHead
                 |> Option.map (fun x ->
                     {
-                        Talks = x.GetCellValue(0, "Talks")
-                        Episodes = x.GetCellValue(0, "Episodes")
-                        Downloads = x.GetCellValue(0, "Downloads")
+                        Talks = x.GetCellValueOrEmpty(0, "Talks")
+                        Episodes = x.GetCellValueOrEmpty(0, "Episodes")
+                        Downloads = x.GetCellValueOrEmpty(0, "Downloads")
                     } : Response.IndexStats
                 )
             )

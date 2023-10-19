@@ -8,6 +8,7 @@
         <Compile Include="Server.fs" />
         <Compile Include="Extensions.fs" />
         <Compile Include="Pages\Index.fs" />
+        <Compile Include="Pages\Talks.fs" />
         <Compile Include="View.fs" />
         <Compile Include="App.fs" />
         <Compile Include="TalksData.fs" />
