@@ -92,7 +92,7 @@ let private talkCard (t:Response.Talk) =
                                 button.sm
                                 prop.children [
                                     Html.div "More info"
-                                    Html.faIcon "fa-solid fa-film"
+                                    Html.faIcon "fa-solid fa-arrow-up-right-from-square"
                                 ]
                                 prop.href l
                             ]
@@ -105,7 +105,7 @@ let private talkCard (t:Response.Talk) =
 
 let private loadingTalk =
     Daisy.card [
-        prop.className $"shadow w-80 animate-pulse"
+        prop.className "shadow w-80 animate-pulse"
         card.bordered
         card.compact
         prop.children [

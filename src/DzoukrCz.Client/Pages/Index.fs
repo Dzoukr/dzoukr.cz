@@ -77,7 +77,7 @@ let private stats (state:State) =
                         ]
                         Daisy.statTitle "Total downloads"
                         Daisy.statValue state.Stats.Downloads
-                        Daisy.statDesc "of 34 packages"
+                        Daisy.statDesc "open source libraries"
                     ]
                 ]
             ]
