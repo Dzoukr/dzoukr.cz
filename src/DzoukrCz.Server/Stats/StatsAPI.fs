@@ -3,6 +3,7 @@ module DzoukrCz.Server.Stats.StatsAPI
 
 open System
 open DzoukrCz.Server.MarkdownTools
+open DzoukrCz.Server.MoonServer.MoonServerAPI
 open FsToolkit.ErrorHandling
 open Giraffe
 open Giraffe.GoodRead
@@ -19,7 +20,7 @@ open Newtonsoft.Json.Linq
 
 let private getStats (publisher:Publisher) () : Task<Response.IndexStats> =
     task {
-        let! stats = publisher.FindByMetadataEq("datasource", JValue("stats")) |> Task.map List.tryHead
+        let! stats = publisher.FindByMetadataEq(Partitioner.data.PartitionPrefix, Partitioner.data.MetadataKey, JValue("stats")) |> Task.map List.tryHead
         return
             stats
             |> Option.bind (fun x ->

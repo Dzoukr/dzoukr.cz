@@ -15,6 +15,16 @@ let private key (s:string) =
     |> List.fold (fun (acc:string) item -> acc.Replace(item, "")) s
     |> (fun x -> x.ToLowerInvariant().Trim())
 
+let pkDelimiter = "_"
+
+let private partitionAndRow (s:string) =
+    let parts = s.Split(pkDelimiter)
+    if parts.Length = 1 then
+        parts.[0], parts.[0]
+    else
+        parts.[0], parts.[1]
+    |> fun (x,y) -> key x, key y
+
 type PublishData = {
     Id : string
     Name : string
@@ -139,8 +149,8 @@ module LinkParser =
 
 module TableStorage =
     let toEntity (data:PublishData) =
-        let id = data.Id |> key
-        let entity = TableEntity(id, id)
+        let partition,row = data.Id |> partitionAndRow
+        let entity = TableEntity(partition, row)
         entity.Add("Name", data.Name)
         entity.Add("Path", data.Path)
         entity.Add("Content", data.Content)
@@ -231,8 +241,9 @@ type Publisher(cfg:Configuration) =
     member _.Unpublish(i:string) =
         task {
             // table
+            let partition,row = i |> partitionAndRow
             let! _ = tableClient.CreateIfNotExistsAsync()
-            let! _ = tableClient.DeleteEntityAsync(key i, key i)
+            let! _ = tableClient.DeleteEntityAsync(key partition, key row)
             // blobs
             let! _ = blobClient.CreateIfNotExistsAsync()
             do! cleanContainer i
@@ -242,22 +253,22 @@ type Publisher(cfg:Configuration) =
     member _.TryDetail (i:string) =
         task {
             let! _ = tableClient.CreateIfNotExistsAsync()
-            let k = i |> key
+            let partition,row = i |> partitionAndRow
             return
                 tableQuery {
-                    filter (pk k + rk k)
+                    filter (pk partition + rk row)
                 }
                 |> tableClient.Query<TableEntity>
                 |> Seq.map TableStorage.toData
                 |> Seq.tryHead
         }
 
-    member _.FindByMetadataEq (name:string, value:JToken) : Task<PublishData list> =
+    member _.FindByMetadataEq (partitionKey:string, name:string, value:JToken) : Task<PublishData list> =
         task {
             let! _ = tableClient.CreateIfNotExistsAsync()
             return
                 tableQuery {
-                    filter (eq $"meta_{name}" (value.ToString(Formatting.None)))
+                    filter (pk partitionKey + eq $"meta_{name}" (value.ToString(Formatting.None)))
                 }
                 |> tableClient.Query<TableEntity>
                 |> Seq.map TableStorage.toData

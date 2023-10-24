@@ -16,6 +16,18 @@ type PublishData = {
     attachments : JObject
 }
 
+type Partitioner = {
+    PartitionPrefix : string
+    MetadataKey : string
+}
+
+module Partitioner =
+    let data = { PartitionPrefix = "data"; MetadataKey = "datasource" }
+    let all = [ data ]
+    let tryFind (metadata:(string * JToken) list) =
+        all
+        |> List.tryFind (fun p -> metadata |> List.exists (fun (x,_) -> x = p.MetadataKey))
+
 let private toKeyValue (j:JObject) =
     j.Properties()
     |> Seq.map (fun v -> v.Name, v.Value)
@@ -37,12 +49,17 @@ let private tryFindId (data:(string * JToken) list) =
         | _ -> None
     )
 
+let private getNewId (metadata:(string * JToken) list) =
+    let prefix = Partitioner.tryFind metadata |> Option.map (fun p -> p.PartitionPrefix + pkDelimiter) |> Option.defaultWith (fun _ -> String.Empty)
+    let i = Guid.NewGuid().ToString("N")
+    $"{prefix}{i}"
+
 let private publish (i:string option) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
     task {
         let! j = ctx.BindJsonAsync<PublishData>()
         let metadata = j.metadata |> toKeyValue
         let attachments = j.attachments |> toKeyValue |> List.map (fun (k,v) -> k, v.Value<string>())
-        let pubId = i |> Option.orElse (tryFindId metadata) |> Option.defaultWith (fun _ -> Guid.NewGuid().ToString("N"))
+        let pubId = i |> Option.orElse (tryFindId metadata) |> Option.defaultWith (fun _ -> getNewId metadata)
         let! _ = publisher.Publish({ Id = pubId; Metadata = metadata; Content = j.content; Name = j.name; Path = j.path; Attachments = attachments })
         return! json {| id = pubId |} next ctx
     }

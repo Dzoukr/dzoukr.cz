@@ -2,6 +2,7 @@ module DzoukrCz.Server.Talks.TalksAPI
 
 open System
 open DzoukrCz.Server.MarkdownTools
+open DzoukrCz.Server.MoonServer.MoonServerAPI
 open FsToolkit.ErrorHandling
 open Giraffe
 open Giraffe.GoodRead
@@ -24,7 +25,7 @@ let private toLang (s:string) : TalkLang =
 
 let private getTalks (publisher:Publisher) () : Task<Response.Talk list> =
     task {
-        let! data = publisher.FindByMetadataEq("datasource", JValue("talks")) |> Task.map List.tryHead
+        let! data = publisher.FindByMetadataEq(Partitioner.data.PartitionPrefix, Partitioner.data.MetadataKey, JValue("talks")) |> Task.map List.tryHead
         return
             data
             |> Option.bind (fun x ->
