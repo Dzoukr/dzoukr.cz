@@ -1,5 +1,6 @@
 ﻿module DzoukrCz.Client.Server
 
+open DzoukrCz.Shared.Shares.API
 open DzoukrCz.Shared.Stats.API
 open DzoukrCz.Shared.Talks.API
 open Fable.SimpleJson
@@ -26,6 +27,35 @@ module Cmd =
         let eitherAsResult fn resultMsg =
             Cmd.OfAsync.either fn () (Result.Ok >> resultMsg) (exnToError >> Result.Error >> resultMsg)
 
+type RemoteData<'a> =
+    | Idle
+    | InProgress
+    | Finished of ServerResult<'a>
+
+module RemoteData =
+    let isInProgress = function
+        | InProgress -> true
+        | _ -> false
+    let isFinished = function
+        | Finished _ -> true
+        | _ -> false
+    let setResponse r = Finished r
+    let tryGetFinishedOk = function
+        | Finished (Ok v) -> Some v
+        | _ -> None
+
+    let map mapFn = function
+        | Idle -> Idle
+        | InProgress -> InProgress
+        | Finished (Error e) -> Finished (Error e)
+        | Finished (Ok data) -> data |> mapFn |> Ok |> Finished
+
+    let bind (bindFn:'a -> RemoteData<'b>) = function
+        | Idle -> Idle
+        | InProgress -> InProgress
+        | Finished (Error e) -> Finished (Error e)
+        | Finished (Ok data) -> data |> bindFn
+
 let statsAPI =
     Remoting.createApi()
     |> Remoting.withRouteBuilder StatsAPI.RouteBuilder
@@ -35,3 +65,8 @@ let talksAPI =
     Remoting.createApi()
     |> Remoting.withRouteBuilder TalksAPI.RouteBuilder
     |> Remoting.buildProxy<TalksAPI>
+
+let sharesAPI =
+    Remoting.createApi()
+    |> Remoting.withRouteBuilder SharesAPI.RouteBuilder
+    |> Remoting.buildProxy<SharesAPI>

@@ -43,7 +43,7 @@ let private stats (state:State) =
                 Daisy.statDesc "and counting..."
             ]
             Html.a [
-                yield! prop.hrefRouted Page.Talks
+                yield! prop.hrefRouted (Web Talks)
                 prop.children [
                     Daisy.stat [
                         Daisy.statFigure [
@@ -119,7 +119,7 @@ let private rightCol (state:State) =
                 Html.text "I am the Principal Technical Lead .NET / Architect at Ciklum Western Europe, a melomaniac, "
                 Html.a [
                     prop.text "a  speaker"
-                    yield! prop.hrefRouted Page.Talks
+                    yield! prop.hrefRouted (Web Talks)
                 ]
                 Html.text ", and a terrible drummer."
             ]

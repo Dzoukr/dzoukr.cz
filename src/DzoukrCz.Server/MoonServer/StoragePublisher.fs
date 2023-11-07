@@ -25,13 +25,22 @@ let private partitionAndRow (s:string) =
         parts.[0], parts.[1]
     |> fun (x,y) -> key x, key y
 
-type PublishData = {
+type PublishRequest = {
     Id : string
     Name : string
     Path : string
     Content : string
     Metadata : (string * JToken) list
     Attachments : (string * string) list
+}
+
+type PublishResponse = {
+    Id : string
+    Name : string
+    Path : string
+    Content : string
+    Metadata : (string * JToken) list
+    CreatedAt : DateTimeOffset
 }
 
 module LinkParser =
@@ -148,7 +157,7 @@ module LinkParser =
         replaces |> List.fold folder markdown
 
 module TableStorage =
-    let toEntity (data:PublishData) =
+    let toEntity (data:PublishRequest) =
         let partition,row = data.Id |> partitionAndRow
         let entity = TableEntity(partition, row)
         entity.Add("Name", data.Name)
@@ -158,7 +167,7 @@ module TableStorage =
             let name = $"meta_{k}"
             entity.Add(name, v.ToString(Formatting.None))
         entity
-    let toData (e:TableEntity) : PublishData =
+    let toData (e:TableEntity) : PublishResponse =
         let meta =
             (e :> IDictionary<string,obj>)
             |> Seq.filter (fun x -> x.Key.StartsWith("meta_"))
@@ -176,7 +185,7 @@ module TableStorage =
             Path = e.GetString("Path")
             Content = e.GetString("Content")
             Metadata = meta
-            Attachments = []
+            CreatedAt = e.Timestamp |> Option.ofNullable |> Option.defaultWith (fun _ -> DateTimeOffset.Now)
         }
 
 type Configuration = {
@@ -223,7 +232,7 @@ type Publisher(cfg:Configuration) =
     member _.ApiKey = cfg.ApiKey
     member _.ApiSecret = cfg.ApiSecret
 
-    member _.Publish(data:PublishData) =
+    member _.Publish(data:PublishRequest) =
         task {
             // table
             let! _ = tableClient.CreateIfNotExistsAsync()
@@ -263,7 +272,7 @@ type Publisher(cfg:Configuration) =
                 |> Seq.tryHead
         }
 
-    member _.FindByMetadataEq (partitionKey:string, name:string, value:JToken) : Task<PublishData list> =
+    member _.FindByMetadataEq (partitionKey:string, name:string, value:JToken) : Task<PublishResponse list> =
         task {
             let! _ = tableClient.CreateIfNotExistsAsync()
             return

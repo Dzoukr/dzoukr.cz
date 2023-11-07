@@ -5,3 +5,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.markdown-viewer pre {
+    padding: unset;
+    margin: 2rem 0;
+}
+
+.markdown-viewer pre div {
+    padding: 1rem !important;
+    margin: 0 !important;
+}
+
+.markdown-viewer img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.markdown-viewer ul.contains-task-list {
+    list-style-type: none;
+}
+.markdown-viewer ul.contains-task-list > li > input[type="checkbox"] {
+    margin: unset;
+    margin-right: 0.5rem;
+}

@@ -11,6 +11,7 @@
     <Compile Include="MoonServer\MoonServerAPI.fs" />
     <Compile Include="Stats\StatsAPI.fs" />
     <Compile Include="Talks\TalksAPI.fs" />
+    <Compile Include="Shares\SharesAPI.fs" />
     <Compile Include="AzureBlobFileProvider.fs" />
     <Compile Include="WebApp.fs" />
     <Compile Include="Program.fs" />

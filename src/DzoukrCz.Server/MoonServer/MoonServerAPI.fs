@@ -21,9 +21,15 @@ type Partitioner = {
     MetadataKey : string
 }
 
+[<RequireQualifiedAccess>]
+module MetadataKeys =
+    let DataSource = "datasource"
+    let Share = "share"
+
 module Partitioner =
-    let data = { PartitionPrefix = "data"; MetadataKey = "datasource" }
-    let all = [ data ]
+    let data = { PartitionPrefix = "data"; MetadataKey = MetadataKeys.DataSource }
+    let share = { PartitionPrefix = "share"; MetadataKey = MetadataKeys.Share }
+    let all = [ data; share ]
     let tryFind (metadata:(string * JToken) list) =
         all
         |> List.tryFind (fun p -> metadata |> List.exists (fun (x,_) -> x = p.MetadataKey))

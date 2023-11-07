@@ -1,10 +1,11 @@
 ﻿module DzoukrCz.Client.View
 
+open DzoukrCz.Client.Router
 open Feliz
 open Feliz.DaisyUI
-open Router
-open Elmish
 open Feliz.UseElmish
+open Feliz.Router
+open Elmish
 
 type private Msg =
     | UrlChanged of Page
@@ -23,8 +24,8 @@ let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
 
 let private padding = "px-4 lg:px-64 "
 
-let private menuLinks (currentPage:Page) =
-    let btn (text:string) (icon:string) (nextPage:Page) =
+let private menuLinks (currentPage:WebPage) =
+    let btn (text:string) (icon:string) (nextPage:WebPage) =
         let isActive = currentPage = nextPage
         Daisy.button.a [
             prop.className "content-center"
@@ -34,17 +35,15 @@ let private menuLinks (currentPage:Page) =
                 Html.faIcon icon
                 Html.span [ prop.text text ]
             ]
-            yield! prop.hrefRouted nextPage
+            yield! prop.hrefRouted (Web nextPage)
         ]
     [
-        btn "About me" "fa-solid fa-user" Page.Index
-        btn "Talks & Events" "fa-solid fa-podcast" Page.Talks
+        btn "About me" "fa-solid fa-user" Index
+        btn "Talks & Events" "fa-solid fa-podcast" Talks
     ]
 
 [<ReactComponent>]
-let private Navbar (currentPage:Page) =
-
-
+let private Navbar (currentPage:WebPage) =
 
     Daisy.navbar [
         color.textNeutralContent
@@ -65,7 +64,7 @@ let private Navbar (currentPage:Page) =
                     button.ghost
                     prop.className "normal-case"
                     prop.text "Roman \"Džoukr\" Provazník"
-                    yield! prop.hrefRouted Page.Index
+                    yield! prop.hrefRouted (Web Index)
                 ]
             ]
             Daisy.navbarCenter [
@@ -74,12 +73,6 @@ let private Navbar (currentPage:Page) =
             Daisy.navbarEnd [
                 Html.divClassed "flex gap-2 hidden lg:flex" [
                     yield! menuLinks currentPage
-
-                    // btn "Blog" "fa-solid fa-blog" Page.Contact
-                    // btn "About me" "fa-solid fa-user" Page.Index
-                    // btn "Talks & Events" "fa-solid fa-podcast" Page.Talks
-                    // btn "Projects" "fa-solid fa-project-diagram" Page.Contact
-                    // btn "Contact" "fa-solid fa-envelope" Page.Contact
                 ]
             ]
         ]
@@ -119,7 +112,7 @@ let private footer =
     ]
 
 [<ReactComponent>]
-let private MainLayout state dispatch =
+let private WebLayout (page:WebPage) =
 
     Daisy.drawer [
         prop.children [
@@ -127,12 +120,11 @@ let private MainLayout state dispatch =
             Daisy.drawerContent [
                 prop.className "h-screen flex flex-col overflow-y-auto"
                 prop.children [
-                    Navbar state.Page
+                    Navbar page
                     Html.divClassed (padding + "grow") [
-                        match state.Page with
-                        | Page.Index -> Pages.Index.IndexView ()
+                        match page with
+                        | Index -> Pages.Index.IndexView ()
                         | Talks -> Pages.Talks.TalksView ()
-                        | Contact -> Html.div "TODO"
                     ]
                     footer
                 ]
@@ -146,7 +138,7 @@ let private MainLayout state dispatch =
                         prop.children [
                             Daisy.menu [
                                 prop.children [
-                                    for m in menuLinks state.Page do
+                                    for m in menuLinks page do
                                         Html.li [
                                             //prop.className "flex flex-grow content-center"
                                             prop.children m
@@ -162,7 +154,10 @@ let private MainLayout state dispatch =
         ]
     ]
 
-
+[<ReactComponent>]
+let private ToolLayout (page:ToolPage) =
+    match page with
+    | Share i -> Pages.Shares.SharesView i
 
 [<ReactComponent>]
 let AppView () =
@@ -171,6 +166,8 @@ let AppView () =
         router.pathMode
         router.onUrlChanged (Page.parseFromUrlSegments >> UrlChanged >> dispatch)
         router.children [
-            MainLayout state dispatch
+            match state.Page with
+            | Web page -> WebLayout page
+            | Tool page -> ToolLayout page
         ]
     ]

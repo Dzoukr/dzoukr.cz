@@ -1,30 +1,36 @@
 ﻿module DzoukrCz.Client.Router
 
 open Browser.Types
-open Feliz.Router
 open Fable.Core.JsInterop
+open Feliz.Router
+
+type WebPage =
+    | Index
+    | Talks
+
+type ToolPage =
+    | Share of string
 
 type Page =
-    | Index
-    | Contact
-    | Talks
+    | Web of WebPage
+    | Tool of ToolPage
 
 [<RequireQualifiedAccess>]
 module Page =
-    let defaultPage = Page.Index
+    let defaultPage = Page.Web Index
 
     let parseFromUrlSegments = function
-        | [ "contact" ] -> Page.Contact
-        | [ "talks" ] -> Page.Talks
-        | [ ] -> Page.Index
+        | [ "share"; str ] -> Page.Tool (Share str)
+        | [ "talks" ] -> Page.Web Talks
+        | [ ] -> Page.Web Index
         | _ -> defaultPage
 
     let noQueryString segments : string list * (string * string) list = segments, []
 
     let toUrlSegments = function
-        | Page.Index -> [ ] |> noQueryString
-        | Page.Contact -> [ "contact" ] |> noQueryString
-        | Page.Talks -> [ "talks" ] |> noQueryString
+        | Page.Web Index -> [ ] |> noQueryString
+        | Page.Web Talks -> [ "talks" ] |> noQueryString
+        | Page.Tool (Share str) -> [ "share"; str ] |> noQueryString
 
 [<RequireQualifiedAccess>]
 module Router =

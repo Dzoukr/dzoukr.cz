@@ -4,14 +4,15 @@
         <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
+        <Compile Include="Components\MarkdownViewer.fs" />
         <Compile Include="Router.fs" />
         <Compile Include="Server.fs" />
         <Compile Include="Extensions.fs" />
         <Compile Include="Pages\Index.fs" />
         <Compile Include="Pages\Talks.fs" />
+        <Compile Include="Pages\Shares.fs" />
         <Compile Include="View.fs" />
         <Compile Include="App.fs" />
-        <Compile Include="TalksData.fs" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\DzoukrCz.Shared\DzoukrCz.Shared.fsproj" />

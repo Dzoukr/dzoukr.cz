@@ -3,6 +3,7 @@
 open DzoukrCz.Server.MoonServer
 open DzoukrCz.Server.Stats
 open DzoukrCz.Server.Talks
+open DzoukrCz.Server.Shares
 open Giraffe
 open Giraffe.GoodRead
 open Fable.Remoting.Server
@@ -14,5 +15,6 @@ let webApp : HttpHandler =
         MoonServerAPI.api
         StatsAPI.api
         TalksAPI.api
+        SharesAPI.api
         htmlFile "public/index.html"
     ]
