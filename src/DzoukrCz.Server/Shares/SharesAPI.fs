@@ -20,7 +20,7 @@ open Newtonsoft.Json.Linq
 
 let private getShare (publisher:Publisher) (i:string) : Task<Response.Share option> =
     task {
-        let! share = publisher.FindByMetadataEq(Partitioner.share.PartitionPrefix, MetadataKeys.Share, JValue("true")) |> Task.map List.tryHead
+        let! share = publisher.FindByMetadataEq(Partitioner.share.PartitionPrefix, i, MetadataKeys.Share, JValue("true")) |> Task.map List.tryHead
         return
             share
             |> Option.map (fun x ->

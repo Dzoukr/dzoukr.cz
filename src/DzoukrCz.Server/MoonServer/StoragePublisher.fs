@@ -283,3 +283,14 @@ type Publisher(cfg:Configuration) =
                 |> Seq.map TableStorage.toData
                 |> Seq.toList
         }
+    member _.FindByMetadataEq (partitionKey:string,rowKey:string, name:string, value:JToken) : Task<PublishResponse list> =
+        task {
+            let! _ = tableClient.CreateIfNotExistsAsync()
+            return
+                tableQuery {
+                    filter (pk partitionKey + rk rowKey + eq $"meta_{name}" (value.ToString(Formatting.None)))
+                }
+                |> tableClient.Query<TableEntity>
+                |> Seq.map TableStorage.toData
+                |> Seq.toList
+        }
