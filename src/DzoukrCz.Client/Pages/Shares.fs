@@ -30,7 +30,7 @@ let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
     | ShareLoaded res -> { state with Share = RemoteData.setResponse res }, Cmd.none
 
 let private inLayout (elm:ReactElement) =
-    Html.divClassed "markdown-viewer prose prose-base lg:prose-xl max-w-none mx-auto w-7/12 lg:w-6/12 my-12" [
+    Html.divClassed "markdown-viewer prose prose-base lg:prose-xl max-w-none mx-auto w-10/12 lg:w-6/12 my-12" [
         elm
     ]
 
