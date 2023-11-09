@@ -25,12 +25,19 @@ let private partitionAndRow (s:string) =
         parts.[0], parts.[1]
     |> fun (x,y) -> key x, key y
 
+type Metadata = (string * JToken) list
+
+module Metadata =
+    let tryGet (m:Metadata) (k:string) =
+        m |> List.tryFind (fun (x,_) -> x.ToLowerInvariant() = k.ToLowerInvariant())
+        |> Option.map (fun (_,v) -> v)
+
 type PublishRequest = {
     Id : string
     Name : string
     Path : string
     Content : string
-    Metadata : (string * JToken) list
+    Metadata : Metadata
     Attachments : (string * string) list
 }
 
@@ -39,9 +46,11 @@ type PublishResponse = {
     Name : string
     Path : string
     Content : string
-    Metadata : (string * JToken) list
+    Metadata : Metadata
     CreatedAt : DateTimeOffset
 }
+
+
 
 module LinkParser =
     open System.IO
@@ -278,17 +287,6 @@ type Publisher(cfg:Configuration) =
             return
                 tableQuery {
                     filter (pk partitionKey + eq $"meta_{name}" (value.ToString(Formatting.None)))
-                }
-                |> tableClient.Query<TableEntity>
-                |> Seq.map TableStorage.toData
-                |> Seq.toList
-        }
-    member _.FindByMetadataEq (partitionKey:string,rowKey:string, name:string, value:JToken) : Task<PublishResponse list> =
-        task {
-            let! _ = tableClient.CreateIfNotExistsAsync()
-            return
-                tableQuery {
-                    filter (pk partitionKey + rk rowKey + eq $"meta_{name}" (value.ToString(Formatting.None)))
                 }
                 |> tableClient.Query<TableEntity>
                 |> Seq.map TableStorage.toData
