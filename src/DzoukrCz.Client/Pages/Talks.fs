@@ -35,7 +35,7 @@ let private talkCard (t:Response.Talk) =
     let isFuture = t.Date > DateTime.Now
     let shadow = if isFuture then "shadow-xl" else "shadow"
     Daisy.card [
-        prop.className $"{shadow} w-80"
+        prop.className $"{shadow} w-full lg:w-72"
         card.bordered
         card.compact
         prop.children [
@@ -143,14 +143,14 @@ let private loadingTalk =
 let TalksView () =
     let state, dispatch = React.useElmish(init, update, [| |])
 
-    Html.divClassed "flex flex-col gap-8 my-8" [
+    Html.divClassed "flex flex-col gap-8" [
         Html.divClassed "prose prose-base lg:prose-xl min-w-full" [
             Html.h1 [
                 prop.text "Talks & Events"
             ]
 
         ]
-        Html.divClassed "flex flex-row gap-8 flex-wrap justify-center lg:justify-start" [
+        Html.divClassed "flex flex-row gap-4 flex-wrap justify-center lg:justify-start" [
             if state.IsLoading then
                 yield! [1..8 ] |> List.map (fun _ -> loadingTalk)
             else

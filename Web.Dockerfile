@@ -1,4 +1,4 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:7.0 as build
+﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
 
 # Install node & yarn
 RUN set -uex; \
@@ -22,8 +22,8 @@ RUN dotnet tool restore
 RUN dotnet run Publish
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 COPY --from=build /workspace/publish/app /app
 WORKDIR /app
-EXPOSE 80
+EXPOSE 8080
 ENTRYPOINT [ "dotnet", "DzoukrCz.Server.dll" ]

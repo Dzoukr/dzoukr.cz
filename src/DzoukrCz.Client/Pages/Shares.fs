@@ -38,7 +38,7 @@ let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
     | Unlock -> { state with Share = RemoteData.InProgress }, Cmd.OfAsync.eitherAsResult (fun _ -> sharesAPI.Unlock state.UnlockShare) ShareLoaded
 
 let private inLayout (elm:ReactElement) =
-    Html.divClassed "markdown-viewer prose prose-base lg:prose-xl max-w-none mx-auto w-10/12 lg:w-6/12 my-12" [
+    Html.divClassed "markdown-viewer prose prose-base lg:prose-xl max-w-4xl mx-auto py-5" [
         elm
     ]
 

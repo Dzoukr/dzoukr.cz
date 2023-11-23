@@ -32,7 +32,7 @@ let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
 let private stats (state:State) =
     let years = DateTimeOffset.Now.Year - 2000
     Daisy.stats [
-        prop.className "shadow w-full"
+        prop.className "shadow stats-vertical lg:stats-horizontal"
         prop.children [
             Daisy.stat [
                 Daisy.statFigure [
@@ -84,45 +84,37 @@ let private stats (state:State) =
         ]
     ]
 
-let private leftCol =
-    let iconLink (icon:string) (text:string) (href:string) =
-        Html.divClassed "flex gap-1 items-center" [
-            Html.faIcon icon
-            Daisy.link [
-                prop.href href
-                prop.text text
-            ]
-        ]
-
-    Html.divClassed "flex flex-col gap-8 items-center p-4" [
-
-        Html.divClassed "flex flex-col gap-4 items-center" [
-            Html.img [ prop.src "img/profile.png"; prop.className "mask mask-circle w-48 lg:w-64" ]
-            Html.divClassed "text-xl" [ Html.text "Building software with ❤️ + 🧠" ]
-        ]
-        Html.divClassed "flex flex-col w-full gap-1 self-start" [
-            Html.divClassed "text-lg font-medium my-2" [ Html.text "CONTACT" ]
-            iconLink "fa-regular fa-envelope" "dzoukr@dzoukr.cz" "mailto:dzoukr@dzoukr.cz"
-            iconLink "fa-brands fa-twitter" "@dzoukr" "https://twitter.com/dzoukr"
-            iconLink "fa-brands fa-github" "dzoukr" "https://github.com/dzoukr"
-            iconLink "fa-brands fa-linkedin" "Roman Provazník" "https://www.linkedin.com/in/dzoukr/"
-        ]
-
-
-    ]
-
-let private rightCol (state:State) =
+[<ReactComponent>]
+let IndexView () =
+    let state, dispatch = React.useElmish(init, update, [| |])
     Html.divClassed "flex flex-col gap-16" [
-        Html.divClassed "prose prose-base lg:prose-xl min-w-full" [
-            Html.h1 "👋 Hi, I'm Roman Provazník"
-            Html.p [
-                Html.text "I am the Principal Technical Lead .NET / Architect at Ciklum Western Europe, a melomaniac, "
-                Html.a [
-                    prop.text "a  speaker"
-                    yield! prop.hrefRouted (Web Talks)
+        Html.divClassed "prose prose-lg lg:prose-xl max-w-none " [
+
+            Html.divClassed "grid grid-cols-1 gap-10 lg:gap-8 lg:grid-cols-4" [
+
+                Html.divClassed "mx-auto" [
+                    Html.img [ prop.src "img/profile.png"; prop.className "not-prose rounded-xl" ]
                 ]
-                Html.text ", and a terrible drummer."
+
+                Html.divClassed "lg:col-span-3" [
+                    Html.h1 "👋 Hi, I'm Roman"
+
+                    Html.text "I am the Principal Technical Lead .NET / Architect at "
+                    Html.a [
+                        prop.text "Ciklum Western Europe"
+                        prop.href "https://www.ciklum.com/we"
+                    ]
+                    Html.text ", a melomaniac,"
+                    Html.a [
+                        prop.text " speaker"
+                        yield! prop.hrefRouted (Web Talks)
+                    ]
+                    Html.text ", "
+                    Html.a [ prop.text "podcaster"; prop.href "https://www.podvocasem.cz" ]
+                    Html.text ", and a terrible drummer."
+                ]
             ]
+
             Html.p "I have more than 20 years of experience with software development using languages like Pascal, Delphi, Prolog, PHP, C#, or F#, but I successfully managed to erase most of these languages from my brain."
             Html.p [
                 Html.text "As a big fan of functional-first .NET language "
@@ -139,24 +131,13 @@ let private rightCol (state:State) =
 
         Html.divClassed "flex self-center" [
             Daisy.button.a [
-                button.neutral
+                button.warning
                 prop.children [
                     Html.faIcon "fa-solid fa-envelope"
-                    Html.text "Say Hello World!"
+                    Html.text "GET IN TOUCH"
                 ]
                 prop.href "mailto:dzoukr@dzoukr.cz"
             ]
         ]
         stats state
     ]
-
-[<ReactComponent>]
-let IndexView () =
-    let state, dispatch = React.useElmish(init, update, [| |])
-
-    Html.divClassed "flex flex-col lg:flex-row gap-8 my-8" [
-        Html.divClassed "basis-1/4" [ leftCol ]
-        Html.divClassed "basis-3/4" [ rightCol state ]
-    ]
-
-
