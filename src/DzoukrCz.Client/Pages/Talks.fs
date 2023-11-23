@@ -88,7 +88,7 @@ let private talkCard (t:Response.Talk) =
                         match t.Link with
                         | Some l ->
                             Daisy.button.a [
-                                button.outline
+                                button.warning
                                 button.sm
                                 prop.children [
                                     Html.div "More info"
@@ -105,7 +105,7 @@ let private talkCard (t:Response.Talk) =
 
 let private loadingTalk =
     Daisy.card [
-        prop.className "shadow w-80 animate-pulse"
+        prop.className "shadow w-full lg:w-72 animate-pulse"
         card.bordered
         card.compact
         prop.children [
@@ -144,22 +144,16 @@ let TalksView () =
     let state, dispatch = React.useElmish(init, update, [| |])
 
     Html.divClassed "flex flex-col gap-8" [
-        Html.divClassed "prose prose-base lg:prose-xl min-w-full" [
-            Html.h1 [
-                prop.text "Talks & Events"
-            ]
-
+        Html.divClassed "prose prose-lg lg:prose-xl mx-auto text-center" [
+            Html.text "Here you can find a list of my talks and events I have attended as a speaker:"
         ]
         Html.divClassed "flex flex-row gap-4 flex-wrap justify-center lg:justify-start" [
             if state.IsLoading then
-                yield! [1..8 ] |> List.map (fun _ -> loadingTalk)
+                yield! [1..9 ] |> List.map (fun _ -> loadingTalk)
             else
                 yield!
                     state.Talks
                     |> List.sortByDescending (fun x -> x.Date)
                     |> List.map talkCard
-
         ]
     ]
-
-

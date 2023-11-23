@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 /** @type {import('vite').UserConfig} */
 export default defineConfig({
-    plugins: [react()],
+    plugins: [react({ jsxRuntime: 'classic'})], // jsxRuntime: 'classic' is required for fast-refresh for .js files
     root: "./src/DzoukrCz.Client",
     server: {
         port: 8080,
@@ -15,5 +15,4 @@ export default defineConfig({
     build: {
         outDir:"../../publish/app/public"
     }
-
 })

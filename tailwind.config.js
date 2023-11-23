@@ -1,21 +1,11 @@
-module.exports = {
-    // theme:{
-    //     extend:{
-    //         typography: {
-    //             DEFAULT : {
-    //                 css: {
-    //                     pre: false,
-    //                     'pre div': false,
-    //                 }
-    //             }
-    //         }
-    //     }
-    // },
+import daisyui from 'daisyui'
+import typography from '@tailwindcss/typography'
+export default {
     content: [
         "./src/DzoukrCz.Client/.fable-build/**/*.{js,ts,jsx,tsx}",
     ],
     plugins: [
-        require('daisyui'),
-        require('@tailwindcss/typography')
+        daisyui,
+        typography
     ]
 }

@@ -104,9 +104,9 @@ let IndexView () =
                         prop.text "Ciklum Western Europe"
                         prop.href "https://www.ciklum.com/we"
                     ]
-                    Html.text ", a melomaniac,"
+                    Html.text ", melomaniac, "
                     Html.a [
-                        prop.text " speaker"
+                        prop.text "speaker"
                         yield! prop.hrefRouted (Web Talks)
                     ]
                     Html.text ", "

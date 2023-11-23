@@ -70,7 +70,7 @@ let private webMenu currentPage menuOpened dispatch =
     let btn (text:string) (nextPage:WebPage) =
         let isActive = currentPage = nextPage
         Html.a [
-            if isActive then prop.className "text-warning font-bold"
+            if isActive then prop.className "text-warning font-bold" else prop.className "hover:font-bold"
             prop.children [
                 Html.span [ prop.text text ]
             ]

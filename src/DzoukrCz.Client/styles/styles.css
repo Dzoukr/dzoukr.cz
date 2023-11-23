@@ -24,7 +24,12 @@
 .markdown-viewer ul.contains-task-list {
     list-style-type: none;
 }
+
 .markdown-viewer ul.contains-task-list > li > input[type="checkbox"] {
     margin: unset;
     margin-right: 0.5rem;
+}
+
+a:hover:not(.btn) {
+    @apply text-warning;
 }
