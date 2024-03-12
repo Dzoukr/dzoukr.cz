@@ -51,6 +51,7 @@ let private footer =
                         iconLink "fa-solid fa-podcast" "PodVocasem" "https://www.podvocasem.cz"
                         // iconLink "fa-brands fa-twitter" "FSharping" "https://twitter.com/fsharping"
                         iconLink "fa-solid fa-code" "fsharpConf" "https://fsharpconf.com"
+                        iconLink "fa-solid fa-hockey-puck" "Hlášky" "https://hlasky.dzoukr.cz"
                     ]
                     Html.nav [
                         Daisy.footerTitle "Contact"
@@ -88,14 +89,19 @@ let private webMenu currentPage menuOpened dispatch =
         if menuOpened then
             Html.divClassed "text-2xl flex flex-col gap-3 items-center" [
                 btn "ABOUT ME" Index
+                //btn "BLOG" (Blogs BlogsFilter.empty)
                 btn "TALKS & EVENTS" Talks
             ]
     ]
 
 let private logo =
-    Html.divClassed "text-3xl lg:text-4xl" [
-        Html.span "<ROMAN"
-        Html.span [ prop.className "font-bold" ++ color.textWarning; prop.text "PROVAZNÍK/>" ]
+    Html.a [
+        prop.className "text-3xl lg:text-4xl not-a"
+        prop.children [
+            Html.span "<ROMAN"
+            Html.span [ prop.className "font-bold" ++ color.textWarning; prop.text "PROVAZNÍK/>" ]
+        ]
+        yield! prop.hrefRouted (Web WebPage.Index)
     ]
 
 let private slogan =
@@ -118,15 +124,12 @@ let private WebLayout (page:WebPage) state dispatch =
             match page with
             | Index -> Pages.Index.IndexView ()
             | Talks -> Pages.Talks.TalksView ()
+            // | Blogs f -> Pages.Blogs.BlogView f
+            // | BlogsDetail rewrite -> Pages.BlogsDetail.BlogsDetailView rewrite
         ]
         footer
     ]
 
-
-[<ReactComponent>]
-let private ToolLayout (page:ToolPage) =
-    match page with
-    | Share i -> Pages.Shares.SharesView i
 
 [<ReactComponent>]
 let AppView () =
@@ -137,6 +140,5 @@ let AppView () =
         router.children [
             match state.Page with
             | Web page -> WebLayout page state dispatch
-            | Tool page -> ToolLayout page
         ]
     ]

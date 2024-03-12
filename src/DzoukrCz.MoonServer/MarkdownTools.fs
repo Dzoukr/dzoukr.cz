@@ -1,4 +1,4 @@
-module DzoukrCz.Server.MarkdownTools.MarkdownTools
+module DzoukrCz.MoonServer.MarkdownTools
 
 open System
 open System.Collections.Generic
@@ -40,30 +40,27 @@ type TableReader(dic:Dictionary<int, string []>) =
         |> Array.mapi (fun i x -> x, i)
         |> dict
 
+    member this.GetHeaders() = dic.[0]
 
-    member this.TryGetCellValue(rowIndex:int, cellName:string) =
-        match cellIndexes.ContainsKey(cellName) with
-        | false -> None
-        | true ->
-            let index = cellIndexes.[cellName]
-            Some (dic.[rowIndex + 1].[index])
+    member this.GetValues() =
+        dic.Values
+        |> Seq.skip 1
+        |> Seq.toArray
 
-    member this.GetCellValueOrEmpty(rowIndex:int, cellName:string) =
-        match this.TryGetCellValue(rowIndex, cellName) with
-        | None -> String.Empty
-        | Some x -> x
-
-    member this.TryGetDataRows () =
-        [0 .. dic.Count - 2]
-        |> List.map (fun i ->
-            fun name -> this.TryGetCellValue(i, name)
+    member this.GetKeyValues() =
+        let headers = this.GetHeaders()
+        this.GetValues()
+        |> Array.map (fun x ->
+            x |> Array.mapi (fun i y ->
+                headers.[i], y
+            )
         )
 
-    member this.GetDataRowsOrEmpty () =
-        [0 .. dic.Count - 2]
-        |> List.map (fun i ->
-            fun name -> this.GetCellValueOrEmpty(i, name)
-        )
+    member this.GetValue(rowIndex:int, column:string) =
+        let headers = this.GetHeaders()
+        let headIndex = Array.IndexOf(headers, column)
+        this.GetValues().[rowIndex][headIndex]
+
 
 let findTables (md:string) : TableReader list =
     let doc = Markdown.Parse(md, pipeline)

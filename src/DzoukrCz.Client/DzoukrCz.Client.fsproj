@@ -10,12 +10,10 @@
         <Compile Include="Extensions.fs" />
         <Compile Include="Pages\Index.fs" />
         <Compile Include="Pages\Talks.fs" />
-        <Compile Include="Pages\Shares.fs" />
+<!--        <Compile Include="Pages\Blogs.fs" />-->
+<!--        <Compile Include="Pages\BlogsDetail.fs" />-->
         <Compile Include="View.fs" />
         <Compile Include="App.fs" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\DzoukrCz.Shared\DzoukrCz.Shared.fsproj" />
     </ItemGroup>
     <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

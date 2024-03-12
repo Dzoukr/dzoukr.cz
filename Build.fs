@@ -12,7 +12,7 @@ initializeContext()
 let publishPath = Path.getFullName "publish"
 let srcPath = Path.getFullName "src"
 let clientSrcPath = srcPath </> "DzoukrCz.Client"
-let serverSrcPath = srcPath </> "DzoukrCz.Server"
+let serverSrcPath = srcPath </> "DzoukrCz.MoonServer"
 let appPublishPath = publishPath </> "app"
 
 // Targets
@@ -33,10 +33,9 @@ Target.create "InstallClient" (fun _ ->
 
 Target.create "Publish" (fun _ ->
     [ appPublishPath ] |> Shell.cleanDirs
-    let publishArgs = sprintf "publish -c Release -o \"%s\"" appPublishPath
-    run Tools.dotnet publishArgs serverSrcPath
-    [ appPublishPath </> "appsettings.Development.json" ] |> File.deleteAll
-
+    // let publishArgs = sprintf "publish -c Release -o \"%s\"" appPublishPath
+    // run Tools.dotnet publishArgs serverSrcPath
+    // [ appPublishPath </> "appsettings.Development.json" ] |> File.deleteAll
     run Tools.dotnet "fable clean --yes" ""
     run Tools.yarn "build" ""
 )
@@ -44,7 +43,7 @@ Target.create "Publish" (fun _ ->
 Target.create "Run" (fun _ ->
     Environment.setEnvironVar "ASPNETCORE_ENVIRONMENT" "Development"
     [
-        "server", Tools.dotnet "watch run" serverSrcPath
+        "moonserver", Tools.dotnet "watch run" serverSrcPath
         "client", Tools.yarn "start" ""
     ]
     |> runParallel

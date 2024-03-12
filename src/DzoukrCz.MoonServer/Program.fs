@@ -1,8 +1,7 @@
-module DzoukrCz.Server.Program
+module DzoukrCz.MoonServer.Program
 
 open Azure.Storage.Blobs
-open DzoukrCz.Server.AzureBlobFileProvider
-open DzoukrCz.Server.MoonServer.StoragePublisher
+open DzoukrCz.MoonServer.StoragePublisher
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
@@ -49,17 +48,12 @@ let private configureWeb (builder:WebApplicationBuilder) =
         })
         |> ignore
     builder.Services.AddSingleton<BlobContainerClient>(BlobContainerClient(storageConnectionString, containerName)) |> ignore
-    builder.Services.AddSingleton<BlobFileProvider>() |> ignore
     builder.Services.AddScoped<Publisher>() |> ignore
     builder.Services.AddMemoryCache() |> ignore
     builder
 
 let private configureApp (app:WebApplication) =
-    let blobFileProvider = (app :> IApplicationBuilder).ApplicationServices.GetRequiredService<BlobFileProvider>()
-    let pathPrefix = app.Configuration.["PathPrefix"]
     app.UseCors() |> ignore
-    app.UseStaticFiles(StaticFileOptions(RequestPath = pathPrefix, FileProvider = blobFileProvider)) |> ignore
-    app.UseStaticFiles() |> ignore
     app.UseGiraffe WebApp.webApp
     app
 

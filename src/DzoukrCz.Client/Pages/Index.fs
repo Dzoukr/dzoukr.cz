@@ -1,32 +1,45 @@
 ﻿module DzoukrCz.Client.Pages.Index
 
 open System
-open DzoukrCz.Shared.Stats.API
 open Feliz
 open Feliz.DaisyUI
 open Elmish
 open Feliz.UseElmish
+open Fable.SimpleHttp
+open Fable.SimpleJson
 open DzoukrCz.Client.Server
 open DzoukrCz.Client.Router
 open DzoukrCz.Client
 
+type IndexStats = {
+    Talks : string
+    Episodes : string
+    Downloads : string
+}
+
 type private State = {
-    Stats : Response.IndexStats
+    Stats : IndexStats
 }
 
 type private Msg =
     | LoadStats
-    | StatsLoaded of ServerResult<Response.IndexStats>
+    | StatsLoaded of ServerResult<IndexStats>
 
 let private init () =
     {
-        Stats = Response.IndexStats.init
+        Stats = { Talks = "27"; Episodes = "48"; Downloads = "693k+" }
     }, Cmd.ofMsg LoadStats
+
+let private getEpisodes () =
+    async {
+        let! (_, responseText) = Http.get "https://media.dzoukr.cz/stats.json"
+        return responseText |> Json.parseNativeAs<IndexStats []> |> Array.head
+    }
 
 let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
     match msg with
-    | LoadStats -> state, Cmd.OfAsync.eitherAsResult (fun _ -> statsAPI.GetStats()) StatsLoaded
-    | StatsLoaded (Ok stats) -> { state with Stats = stats }, Cmd.none
+    | LoadStats -> state, Cmd.OfAsync.eitherAsResult (fun _ -> getEpisodes()) StatsLoaded
+    | StatsLoaded (Ok stats) -> { Stats = stats }, Cmd.none
     | StatsLoaded (Error _) -> state, Cmd.none
 
 let private stats (state:State) =
@@ -88,18 +101,15 @@ let private stats (state:State) =
 let IndexView () =
     let state, dispatch = React.useElmish(init, update, [| |])
     Html.divClassed "flex flex-col gap-16" [
-        Html.divClassed "prose prose-lg lg:prose-xl max-w-none " [
-
+        Html.divClassed "formatted-text" [
             Html.divClassed "grid grid-cols-1 gap-10 lg:gap-8 lg:grid-cols-4" [
-
                 Html.divClassed "mx-auto" [
                     Html.img [ prop.src "img/profile.png"; prop.className "not-prose rounded-xl" ]
                 ]
-
                 Html.divClassed "lg:col-span-3" [
                     Html.h1 "👋 Hi, I'm Roman"
 
-                    Html.text "I am the Principal Technical Lead .NET / Architect at "
+                    Html.text "I am .NET Center of Excellence Director at "
                     Html.a [
                         prop.text "Ciklum Western Europe"
                         prop.href "https://www.ciklum.com/we"
@@ -114,7 +124,6 @@ let IndexView () =
                     Html.text ", and a terrible drummer."
                 ]
             ]
-
             Html.p "I have more than 20 years of experience with software development using languages like Pascal, Delphi, Prolog, PHP, C#, or F#, but I successfully managed to erase most of these languages from my brain."
             Html.p [
                 Html.text "As a big fan of functional-first .NET language "

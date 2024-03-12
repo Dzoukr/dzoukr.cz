@@ -1,7 +1,8 @@
-module DzoukrCz.Server.MoonServer.StoragePublisher
+module DzoukrCz.MoonServer.StoragePublisher
 
 open System
 open System.Collections.Generic
+open System.Globalization
 open System.Threading.Tasks
 open Azure.Data.Tables
 open Azure.Data.Tables.FSharp
@@ -15,7 +16,7 @@ let private key (s:string) =
     |> List.fold (fun (acc:string) item -> acc.Replace(item, "")) s
     |> (fun x -> x.ToLowerInvariant().Trim())
 
-let pkDelimiter = "_"
+let pkDelimiter = "-"
 
 let private partitionAndRow (s:string) =
     let parts = s.Split(pkDelimiter)
@@ -25,12 +26,36 @@ let private partitionAndRow (s:string) =
         parts.[0], parts.[1]
     |> fun (x,y) -> key x, key y
 
+let private tryDateTimeOffsetUTC (s:string) =
+    match DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal ||| DateTimeStyles.AdjustToUniversal) with
+    | true, dt -> Some dt
+    | _ -> None
+
 type Metadata = (string * JToken) list
 
 module Metadata =
     let tryGet (m:Metadata) (k:string) =
         m |> List.tryFind (fun (x,_) -> x.ToLowerInvariant() = k.ToLowerInvariant())
         |> Option.map (fun (_,v) -> v)
+
+    let tryGetString (m:Metadata) (k:string) =
+        tryGet m k |> Option.map (fun x -> x.Value<string>())
+
+    let private tryToStringList (xs:JToken seq) =
+        try
+            xs |> Seq.map (fun x -> x.Value<string>()) |> Seq.toList |> Some
+        with _ -> None
+
+    let tryGetStrings (m:Metadata) (k:string) =
+        tryGet m k
+        |> Option.bind (fun x ->
+            if x.HasValues then x.Values() |> tryToStringList
+            else None)
+        |> Option.defaultValue []
+
+    let tryGetDateTimeOffset (m:Metadata) (k:string) =
+        tryGetString m k |> Option.bind (fun x -> x |> tryDateTimeOffsetUTC)
+
 
 type PublishRequest = {
     Id : string
@@ -281,12 +306,41 @@ type Publisher(cfg:Configuration) =
                 |> Seq.tryHead
         }
 
+    member _.UpsertFile (name:string, content:System.IO.Stream) =
+        task {
+            let! _ = blobClient.CreateIfNotExistsAsync()
+            let blob = blobClient.GetBlobClient(name)
+            let! _ = blob.UploadAsync(BinaryData.FromStream(content), true)
+            return ()
+        }
+
+    member _.DeleteFile (name:string) =
+        task {
+            let! _ = blobClient.CreateIfNotExistsAsync()
+            let blob = blobClient.GetBlobClient(name)
+            let! _ = blob.DeleteIfExistsAsync()
+            return ()
+        }
+
+
     member _.FindByMetadataEq (partitionKey:string, name:string, value:JToken) : Task<PublishResponse list> =
         task {
             let! _ = tableClient.CreateIfNotExistsAsync()
             return
                 tableQuery {
                     filter (pk partitionKey + eq $"meta_{name}" (value.ToString(Formatting.None)))
+                }
+                |> tableClient.Query<TableEntity>
+                |> Seq.map TableStorage.toData
+                |> Seq.toList
+        }
+
+    member _.FindByPartition (partitionKey:string) : Task<PublishResponse list> =
+        task {
+            let! _ = tableClient.CreateIfNotExistsAsync()
+            return
+                tableQuery {
+                    filter (pk partitionKey)
                 }
                 |> tableClient.Query<TableEntity>
                 |> Seq.map TableStorage.toData

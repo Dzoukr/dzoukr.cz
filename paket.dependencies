@@ -19,6 +19,7 @@ nuget Feliz
 nuget Feliz.DaisyUI
 nuget Feliz.Router
 nuget Feliz.UseElmish
+nuget Fable.SimpleHttp
 
 nuget FsToolkit.ErrorHandling.TaskResult
 

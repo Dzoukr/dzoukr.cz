@@ -26,6 +26,11 @@ type Html
             ]
         static member inline divClassed (cn:string) (elm:ReactElement list) = Html.classed Html.div cn elm
         static member inline faIcon (cn:string) = Html.i [ prop.className cn ]
+        static member inline loading (cn:string) =
+            Html.p [
+                prop.className $"{cn} bg-slate-200 rounded"
+                prop.dangerouslySetInnerHTML "&nbsp;"
+            ]
 
 module Cmd =
     open Elmish

@@ -30,6 +30,10 @@
     margin-right: 0.5rem;
 }
 
-a:hover:not(.btn) {
+a:hover:not(.btn, .not-a) {
     @apply text-warning;
+}
+
+.formatted-text {
+    @apply prose prose-lg lg:prose-xl max-w-none;
 }

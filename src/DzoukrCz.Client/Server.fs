@@ -1,8 +1,5 @@
 ﻿module DzoukrCz.Client.Server
 
-open DzoukrCz.Shared.Shares.API
-open DzoukrCz.Shared.Stats.API
-open DzoukrCz.Shared.Talks.API
 open Fable.SimpleJson
 open Fable.Remoting.Client
 
@@ -55,18 +52,3 @@ module RemoteData =
         | InProgress -> InProgress
         | Finished (Error e) -> Finished (Error e)
         | Finished (Ok data) -> data |> bindFn
-
-let statsAPI =
-    Remoting.createApi()
-    |> Remoting.withRouteBuilder StatsAPI.RouteBuilder
-    |> Remoting.buildProxy<StatsAPI>
-
-let talksAPI =
-    Remoting.createApi()
-    |> Remoting.withRouteBuilder TalksAPI.RouteBuilder
-    |> Remoting.buildProxy<TalksAPI>
-
-let sharesAPI =
-    Remoting.createApi()
-    |> Remoting.withRouteBuilder SharesAPI.RouteBuilder
-    |> Remoting.buildProxy<SharesAPI>
