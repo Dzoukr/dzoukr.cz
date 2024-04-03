@@ -69,7 +69,13 @@ let private webMenu currentPage menuOpened dispatch =
     let icon = if menuOpened then "fa-circle-xmark" else "fa-bars"
 
     let btn (text:string) (nextPage:WebPage) =
-        let isActive = currentPage = nextPage
+        let isActive =
+            match currentPage, nextPage with
+            | BlogsDetail _, Blogs _
+            | Blogs _, BlogsDetail _
+            | Blogs _, Blogs _ -> true
+            | x, y -> x = y
+
         Html.a [
             if isActive then prop.className "text-warning font-bold" else prop.className "hover:font-bold"
             prop.children [
@@ -89,7 +95,7 @@ let private webMenu currentPage menuOpened dispatch =
         if menuOpened then
             Html.divClassed "text-2xl flex flex-col gap-3 items-center" [
                 btn "ABOUT ME" Index
-                //btn "BLOG" (Blogs BlogsFilter.empty)
+                btn "BLOG" (Blogs BlogsFilter.empty)
                 btn "TALKS & EVENTS" Talks
             ]
     ]
@@ -124,8 +130,8 @@ let private WebLayout (page:WebPage) state dispatch =
             match page with
             | Index -> Pages.Index.IndexView ()
             | Talks -> Pages.Talks.TalksView ()
-            // | Blogs f -> Pages.Blogs.BlogView f
-            // | BlogsDetail rewrite -> Pages.BlogsDetail.BlogsDetailView rewrite
+            | Blogs f -> Pages.Blogs.BlogView f
+            | BlogsDetail url -> Pages.BlogsDetail.BlogsDetailView url
         ]
         footer
     ]

@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.Text
 open DzoukrCz.MoonServer.StoragePublisher
+open FsToolkit.ErrorHandling
 open Giraffe
 open Giraffe.GoodRead
 open Microsoft.AspNetCore.Http
@@ -23,28 +24,80 @@ type DataTable = {
     FileName : string
 }
 
+type BlogPost = {
+    Title : string
+    Url : string
+    Publish : DateTimeOffset
+    Tags : string list
+    Lang : string
+}
+
 type DataType =
     | DataTable of DataTable
+    | BlogPost of BlogPost
 
 type Metadata = (string * JToken) list
+
+module Metadata =
+    let tryGet (m:Metadata) (k:string) =
+        m |> List.tryFind (fun (x,_) -> x.ToLowerInvariant() = k.ToLowerInvariant())
+        |> Option.map (fun (_,v) -> v)
+
+    let tryGetString (m:Metadata) (k:string) =
+        tryGet m k |> Option.map (fun x -> x.Value<string>())
+
+    let private tryToStringList (xs:JToken seq) =
+        try
+            xs |> Seq.map (fun x -> x.Value<string>()) |> Seq.toList |> Some
+        with _ -> None
+
+    let tryGetStrings (m:Metadata) (k:string) =
+        tryGet m k
+        |> Option.bind (fun x ->
+            if x.HasValues then x.Values() |> tryToStringList
+            else None)
+        |> Option.defaultValue []
 
 [<RequireQualifiedAccess>]
 module DataType =
     [<Literal>]
-    let private dtKey = "datatable"
+    let DTKey = "datatable"
+
+    [<Literal>]
+    let BPKey = "blog"
 
     let private tryDataTable (m:Metadata) =
         m
-        |> List.tryFind (fun (x,_) -> x = dtKey)
+        |> List.tryFind (fun (x,_) -> x = DTKey)
         |> Option.map snd
         |> Option.map (fun x -> DataTable { FileName = x.Value<string>() })
 
+    let private tryBlogPost (m:Metadata) =
+        let someTitle = "title" |> Metadata.tryGetString m
+        let someUrl = "url" |> Metadata.tryGetString m
+        let publish = "publish" |> Metadata.tryGetString m |> Option.map DateTimeOffset.Parse |> Option.defaultWith (fun _ -> DateTimeOffset.Now)
+        let lang = "lang" |> Metadata.tryGetString m |> Option.defaultValue "en"
+        let tags = "tags" |> Metadata.tryGetStrings m
+
+        Option.map2 (fun title url ->
+            {
+                Title = title
+                Url = url
+                Publish = publish
+                Tags = tags
+                Lang = lang
+            }
+        ) someTitle someUrl
+        |> Option.map BlogPost
+
     let getPrefix = function
-        | DataTable _ -> dtKey
+        | DataTable _ -> DTKey
+        | BlogPost _ -> BPKey
 
     let ofMetadata (m:Metadata) : DataType =
         m
         |> tryDataTable
+        |> Option.orElseWith (fun _ -> tryBlogPost m)
         |> Option.defaultWith (fun _ -> failwith "Cannot find datatype from metadata properties")
 
 let private toMetadata (j:JObject) =
@@ -86,38 +139,114 @@ module PostPublisher =
             arr.Add(j)
         arr
 
-    let postPublish (publisher:Publisher) (i:string) (d:DataType) =
+    let private writeToFile (publisher:Publisher) (filename:string) (jt:JToken) =
         task {
-            match d with
+            use ms = new MemoryStream()
+            use sw = new StreamWriter(ms, Encoding.UTF8)
+            use jw = new JsonTextWriter(sw)
+            do! jt.WriteToAsync(jw)
+            jw.Flush()
+            ms.Position <- 0L
+            do! publisher.UpsertFile(filename, ms)
+        }
+
+    let private setSharePropsOfBlogPost (i:string) (post:BlogPost) (o:JObject) =
+        o.["Id"] <- i
+        o.["Title"] <- post.Title
+        o.["Url"] <- post.Url
+        o.["Publish"] <- post.Publish.UtcDateTime.ToString("O")
+        o.["Tags"] <- post.Tags |> Array.ofList |> JArray
+        o.["Lang"] <- post.Lang
+
+    let private blogPostToJObject (i:string) (post:BlogPost) (content:string) =
+        let o = JObject()
+        o |> setSharePropsOfBlogPost i post
+        o.["Content"] <- content
+        o
+
+    let private blogPostToJObjectList (i:string) (post:BlogPost) =
+        let o = JObject()
+        o |> setSharePropsOfBlogPost i post
+        o
+
+    let private tryToBlogPostJObject (pr:PublishResponse) =
+        let m = pr.Metadata |> DataType.ofMetadata
+        match m with
+        | DataType.DataTable _ -> None
+        | DataType.BlogPost pb -> Some (blogPostToJObjectList pr.Id pb)
+
+    let private reindexPosts (publisher:Publisher) (idToFilter:string option) =
+        task {
+            // create index
+            let! all =
+                publisher.FindByPartition DataType.BPKey
+                |> Task.map (fun x ->
+                    match idToFilter with
+                    | Some i -> x |> List.filter (fun y -> y.Id <> i)
+                    | None -> x
+                )
+                |> Task.map (List.choose tryToBlogPostJObject)
+                |> Task.map (fun x ->
+                    let arr = JArray()
+                    arr.Add(x)
+                    arr
+                )
+            do! writeToFile publisher $"blogposts.json" all
+        }
+    let private _postPublish (publisher:Publisher) (i:string) (detail:PublishResponse) (dataType:DataType) =
+        task {
+            match dataType with
             | DataTable data ->
-                let! d = publisher.TryDetail i
-                let detail = d.Value
                 let tables = detail.Content |> MarkdownTools.findTables
                 let arr = tables.[0] |> tableToJArray
-                use ms = new MemoryStream()
-                use sw = new StreamWriter(ms, Encoding.UTF8)
-                use jw = new JsonTextWriter(sw)
-                do! arr.WriteToAsync(jw)
-                jw.Flush()
-                ms.Position <- 0L
-                do! publisher.UpsertFile(data.FileName + ".json", ms)
-            return ()
+                do! writeToFile publisher $"{data.FileName}.json" arr
+            | BlogPost post ->
+                let ob = detail.Content |> blogPostToJObject i post
+                do! writeToFile publisher $"blog/{i}.json" ob
+                do! reindexPosts publisher None
+        }
+
+    let postPublish (publisher:Publisher) (i:string) =
+        task {
+            let! detail = publisher.TryDetail i
+            let d = detail |> Option.map (fun x -> x.Metadata |> DataType.ofMetadata)
+            match detail, d with
+            | Some detail, Some datatype -> do! _postPublish publisher i detail datatype
+            | _ -> return ()
+        }
+
+    let private _preUnpublish (publisher:Publisher) (i:string) (detail:PublishResponse) (dataType:DataType) =
+        task {
+            match dataType with
+            | DataTable data -> do! publisher.DeleteFile data.FileName
+            | BlogPost _ ->
+                do! publisher.DeleteFile $"blog/{i}.json"
+                do! reindexPosts publisher (Some i)
+        }
+
+    let preUnpublish (publisher:Publisher) (i:string) =
+        task {
+            let! detail = publisher.TryDetail i
+            let d = detail |> Option.map (fun x -> x.Metadata |> DataType.ofMetadata)
+            match detail, d with
+            | Some detail, Some datatype -> do! _preUnpublish publisher i detail datatype
+            | _ -> return ()
         }
 
 let private publish (i:string option) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
     task {
         let! j = ctx.BindJsonAsync<PublishData>()
         let metadata = j.metadata |> toMetadata
-        let dataType = metadata |> DataType.ofMetadata
         let attachments = j.attachments |> toMetadata |> List.map (fun (k,v) -> k, v.Value<string>())
         let pubId = i |> Option.orElse (tryFindId metadata) |> Option.defaultWith (fun _ -> getNewId metadata)
         let! _ = publisher.Publish({ Id = pubId; Metadata = metadata; Content = j.content; Name = j.name; Path = j.path; Attachments = attachments })
-        let! _ = PostPublisher.postPublish publisher pubId dataType
+        let! _ = PostPublisher.postPublish publisher pubId
         return! json {| id = pubId |} next ctx
     }
 
 let private unpublish (pubId:string) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
     task {
+        let! _ = PostPublisher.preUnpublish publisher pubId
         let! _ = publisher.Unpublish(pubId)
         return! json {| id = null |} next ctx
     }

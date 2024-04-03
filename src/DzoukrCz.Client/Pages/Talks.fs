@@ -6,12 +6,10 @@ open Feliz.DaisyUI
 open Elmish
 open Feliz.UseElmish
 open DzoukrCz.Client.Server
-open DzoukrCz.Client.Router
 open DzoukrCz.Client
 open Fable.SimpleJson
 open Fable.SimpleHttp
 
-//[{"Date":"2018-03-29","Event":"SYMA 2018","Title":"SW Quality Discussion Panel","Place":"Prague, CZ","Lang":"CZ","Link":"[https://www.tpconsulting.cz/konference-syma-2018-csj-n24695.htm](https://www.tpconsulting.cz/konference-syma-2018-csj-n24695.htm)","Logo":"![syma_logo.png](https://media.dzoukr.cz/datatable-3cc5022532b14f0d9b4181f8fde9c519/e42a6d607f034726b9210c7bb7e235f1.png)"}
 type TalkLang = CZ | EN
 
 type TalkRaw = {
@@ -74,7 +72,6 @@ let private getTalks () =
         let! (_, responseText) = Http.get "https://media.dzoukr.cz/talks.json"
         return responseText |> Json.parseNativeAs<TalkRaw []> |> Array.toList |> List.map Talk.ofRaw
     }
-
 
 let private update (msg:Msg) (state:State) : State * Cmd<Msg> =
     match msg with

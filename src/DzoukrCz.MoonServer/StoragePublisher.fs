@@ -33,30 +33,6 @@ let private tryDateTimeOffsetUTC (s:string) =
 
 type Metadata = (string * JToken) list
 
-module Metadata =
-    let tryGet (m:Metadata) (k:string) =
-        m |> List.tryFind (fun (x,_) -> x.ToLowerInvariant() = k.ToLowerInvariant())
-        |> Option.map (fun (_,v) -> v)
-
-    let tryGetString (m:Metadata) (k:string) =
-        tryGet m k |> Option.map (fun x -> x.Value<string>())
-
-    let private tryToStringList (xs:JToken seq) =
-        try
-            xs |> Seq.map (fun x -> x.Value<string>()) |> Seq.toList |> Some
-        with _ -> None
-
-    let tryGetStrings (m:Metadata) (k:string) =
-        tryGet m k
-        |> Option.bind (fun x ->
-            if x.HasValues then x.Values() |> tryToStringList
-            else None)
-        |> Option.defaultValue []
-
-    let tryGetDateTimeOffset (m:Metadata) (k:string) =
-        tryGetString m k |> Option.bind (fun x -> x |> tryDateTimeOffsetUTC)
-
-
 type PublishRequest = {
     Id : string
     Name : string
@@ -214,7 +190,7 @@ module TableStorage =
             |> List.append [("id", JValue(e.PartitionKey))]
 
         {
-            Id = e.PartitionKey
+            Id = e.PartitionKey + pkDelimiter + e.RowKey
             Name = e.GetString("Name")
             Path = e.GetString("Path")
             Content = e.GetString("Content")
