@@ -95,7 +95,7 @@ let private webMenu currentPage menuOpened dispatch =
         if menuOpened then
             Html.divClassed "text-2xl flex flex-col gap-3 items-center" [
                 btn "ABOUT ME" Index
-                btn "BLOG" (Blogs BlogsFilter.empty)
+                // btn "BLOG" (Blogs BlogsFilter.empty)
                 btn "TALKS & EVENTS" Talks
             ]
     ]
