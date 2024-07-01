@@ -109,7 +109,7 @@ let IndexView () =
                 Html.divClassed "lg:col-span-3" [
                     Html.h1 "👋 Hi, I'm Roman"
 
-                    Html.text "I am .NET Center of Excellence Director at "
+                    Html.text "I am a Head of Product Engineering at "
                     Html.a [
                         prop.text "Ciklum Western Europe"
                         prop.href "https://www.ciklum.com/we"
