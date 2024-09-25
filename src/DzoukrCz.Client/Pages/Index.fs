@@ -27,7 +27,7 @@ type private Msg =
 
 let private init () =
     {
-        Stats = { Talks = "27"; Episodes = "48"; Downloads = "693k+" }
+        Stats = { Talks = "30"; Episodes = "55"; Downloads = "790k+" }
     }, Cmd.ofMsg LoadStats
 
 let private getEpisodes () =
@@ -111,7 +111,7 @@ let IndexView () =
 
                     Html.text "I am a Head of Product Engineering at "
                     Html.a [
-                        prop.text "Ciklum Western Europe"
+                        prop.text "Ciklum Czech Republic & Slovakia"
                         prop.href "https://www.ciklum.com/we"
                     ]
                     Html.text ", melomaniac, "
