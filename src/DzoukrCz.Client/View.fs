@@ -56,7 +56,7 @@ let private footer =
                     Html.nav [
                         Daisy.footerTitle "Contact"
                         iconLink "fa-regular fa-envelope" "dzoukr@dzoukr.cz" "mailto:dzoukr@dzoukr.cz"
-                        iconLink "fa-brands fa-twitter" "@dzoukr" "https://twitter.com/dzoukr"
+                        iconLink "fa-brands fa-bluesky" "@dzoukr.cz" "https://bsky.app/profile/dzoukr.cz"
                         iconLink "fa-brands fa-github" "dzoukr" "https://github.com/dzoukr"
                         iconLink "fa-brands fa-linkedin" "Roman Provazník" "https://www.linkedin.com/in/dzoukr/"
                     ]
