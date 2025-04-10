@@ -1,7 +1,6 @@
-module DzoukrCz.MoonServer.Program
+﻿module DzoukrCz.WebServer.Program
 
 open Azure.Storage.Blobs
-open DzoukrCz.MoonServer.StoragePublisher
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Hosting
@@ -38,28 +37,35 @@ let private configureWeb (builder:WebApplicationBuilder) =
         )
     ) |> ignore
     builder.Services.AddGiraffe() |> ignore
-    builder.Services.AddSingleton<Configuration>(
-        {
-            ConnectionString = storageConnectionString
-            TableName = tableName
-            ContainerName = containerName
-            PathPrefix = pathPrefix
-            ApiKey = apiKey
-            ApiSecret = apiSecret
-        })
-        |> ignore
+    // builder.Services.AddSingleton<Configuration>(
+    //     {
+    //         ConnectionString = storageConnectionString
+    //         TableName = tableName
+    //         ContainerName = containerName
+    //         PathPrefix = pathPrefix
+    //         ApiKey = apiKey
+    //         ApiSecret = apiSecret
+    //     })
+    //     |> ignore
     builder.Services.AddSingleton<BlobContainerClient>(BlobContainerClient(storageConnectionString, containerName)) |> ignore
-    builder.Services.AddScoped<Publisher>() |> ignore
     builder.Services.AddMemoryCache() |> ignore
-    builder.WebHost.UseUrls("http://localhost:5001") |> ignore
+    builder.WebHost.UseUrls("http://localhost:5000") |> ignore
     builder
 
 let private configureApp (app:WebApplication) =
     app.UseCors() |> ignore
+    app.UseStaticFiles() |> ignore
     app.UseGiraffe WebApp.webApp
     app
 
-let private builderOptions = WebApplicationOptions(WebRootPath = "public")
+let private webRootPath =
+#if DEBUG
+    "../WebClient"
+#else
+    "public"
+#endif
+
+let private builderOptions = WebApplicationOptions(WebRootPath = webRootPath)
 let private builder =
     WebApplication.CreateBuilder(builderOptions)
     |> addApplicationInsights
@@ -69,5 +75,17 @@ let private builder =
 let app =
     builder.Build()
     |> configureApp
+
+#if DEBUG
+open System.Net.Http
+async {
+    use client = new HttpClient()
+    try
+        let! _ = client.GetAsync("http://localhost:8080/__reload") |> Async.AwaitTask
+        printfn "Triggered Vite page reload"
+    with ex ->
+        printfn "Failed to trigger reload: %s" ex.Message
+} |> Async.Start
+#endif
 
 app.Run()

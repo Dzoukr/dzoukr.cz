@@ -1,3 +1,5 @@
+open System.IO
+open System.Net.Http
 open Fake
 open Fake.Core
 open Fake.IO
@@ -12,14 +14,16 @@ initializeContext()
 let publishPath = Path.getFullName "publish"
 let srcPath = Path.getFullName "src"
 let clientSrcPath = srcPath </> "DzoukrCz.Client"
-let serverSrcPath = srcPath </> "DzoukrCz.MoonServer"
-let appPublishPath = publishPath </> "app"
+let moonServerSrcPath = srcPath </> "DzoukrCz.MoonServer"
+let webServerSrcPath = srcPath </> "DzoukrCz.WebServer"
+let webPublishPath = publishPath </> "webApp"
+let moonPublishPath = publishPath </> "moonApp"
 
 // Targets
 let clean proj = [ proj </> "bin"; proj </> "obj"; proj </> ".fable-build" ] |> Shell.cleanDirs
 
 Target.create "Clean" (fun _ ->
-    serverSrcPath |> clean
+    moonServerSrcPath |> clean
     clientSrcPath |> clean
 )
 
@@ -32,18 +36,18 @@ Target.create "InstallClient" (fun _ ->
 )
 
 Target.create "Publish" (fun _ ->
-    [ appPublishPath ] |> Shell.cleanDirs
-    // let publishArgs = sprintf "publish -c Release -o \"%s\"" appPublishPath
-    // run Tools.dotnet publishArgs serverSrcPath
-    // [ appPublishPath </> "appsettings.Development.json" ] |> File.deleteAll
-    run Tools.dotnet "fable clean --yes" ""
+    [ webPublishPath ] |> Shell.cleanDirs
+    let publishArgs = sprintf "publish -c Release -o \"%s\"" webPublishPath
+    run Tools.dotnet publishArgs webServerSrcPath
+    [ webPublishPath </> "appsettings.Development.json" ] |> File.deleteAll
     run Tools.yarn "build" ""
 )
 
 Target.create "Run" (fun _ ->
     Environment.setEnvironVar "ASPNETCORE_ENVIRONMENT" "Development"
     [
-        "moonserver", Tools.dotnet "watch run" serverSrcPath
+        "moonserver", Tools.dotnet "watch run" moonServerSrcPath
+        "webserver", Tools.dotnet "watch run" webServerSrcPath
         "client", Tools.yarn "start" ""
     ]
     |> runParallel
