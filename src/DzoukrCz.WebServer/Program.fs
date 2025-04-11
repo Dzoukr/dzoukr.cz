@@ -60,7 +60,7 @@ let private configureApp (app:WebApplication) =
 
 let private webRootPath =
 #if DEBUG
-    "../WebClient"
+    "../DzoukrCz.WebClient/public"
 #else
     "public"
 #endif

@@ -26,11 +26,14 @@ export default defineConfig({
         outDir: '../../publish/webApp/public',
         emptyOutDir: true,
         rollupOptions: {
-            input: './src/DzoukrCz.WebClient/styles.css', // No JS, just CSS
+            input: './src/DzoukrCz.WebClient/scripts.ts',
             output: {
+                entryFileNames: 'scripts.js',
                 assetFileNames: (assetInfo) => {
-                    // Make CSS file be named 'styles.css'
-                    if (assetInfo.name === 'styles.css') return 'styles.css'
+                    // Force the CSS output to be named styles.css
+                    if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+                        return 'styles.css'
+                    }
                     // Place all other assets in the root folder
                     return '[name][extname]'
                 }

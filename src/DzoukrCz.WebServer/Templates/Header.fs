@@ -5,8 +5,8 @@ open Feliz.ViewEngine
 let private stylesTags =
 #if DEBUG
         [
-            Html.script [ prop.type' "module"; prop.src "http://localhost:8080/styles.js" ]
             Html.script [ prop.type' "module"; prop.src "http://localhost:8080/@vite/client" ]
+            Html.script [ prop.type' "module"; prop.src "http://localhost:8080/scripts.js" ]
             Html.link [ prop.rel "stylesheet"; prop.href "http://localhost:8080/styles.css" ]
         ]
 #else

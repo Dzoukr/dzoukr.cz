@@ -8,9 +8,10 @@
   <ItemGroup>
     <Compile Include="Extensions.fs" />
     <Compile Include="Site.fs" />
-    <Compile Include="Templates\Document.fs" />
-    <Compile Include="Templates\Header.fs" />
     <Compile Include="Templates\Menu.fs" />
+    <Compile Include="Templates\Header.fs" />
+    <Compile Include="Templates\Footer.fs" />
+    <Compile Include="Templates\Document.fs" />
     <Compile Include="Pages\Index.fs" />
     <Compile Include="WebApp.fs" />
     <Compile Include="Program.fs" />
