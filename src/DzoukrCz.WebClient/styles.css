@@ -20,6 +20,10 @@ a:not(.btn, .not-a) {
 }
 
 
+.test {
+    @apply mx-auto lg:float-left mb-6 lg:my-0 lg:mr-8 w-[60%] lg:w-[30%] object-cover rounded-xl;
+}
+
 
 /*.markdown-viewer pre {*/
 /*    padding: unset;*/

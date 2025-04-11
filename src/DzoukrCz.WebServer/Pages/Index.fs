@@ -7,27 +7,22 @@ open DzoukrCz.WebServer.Site
 
 let private body =
     Html.divClassed "formatted-text" [
-
-        Html.divClassed "grid grid-cols-1 gap-10 lg:gap-8 lg:grid-cols-4" [
-            Html.divClassed "mx-auto flex flex-col items-center" [
-                Html.img [ prop.src "/img/profile.png"; prop.className "not-prose rounded-xl w-[50%] lg:w-full" ]
+        Html.img [ prop.src "/img/profile.png"; prop.className "not-prose mx-auto lg:float-left mb-6 lg:my-0 lg:mr-8 w-[60%] lg:w-[30%] object-cover rounded-xl" ]
+        Html.h1 "👋 Hi, I'm Roman"
+        Html.p [
+            Html.text "I am a Head of Product Engineering at "
+            Html.a [
+                prop.text "Ciklum Czech Republic & Slovakia"
+                prop.href "https://www.ciklum.com/we"
             ]
-            Html.divClassed "lg:col-span-3" [
-                Html.h1 "👋 Hi, I'm Roman"
-                Html.text "I am a Head of Product Engineering at "
-                Html.a [
-                    prop.text "Ciklum Czech Republic & Slovakia"
-                    prop.href "https://www.ciklum.com/we"
-                ]
-                Html.text ", melomaniac, "
-                Html.a [
-                    prop.text "speaker"
-                    prop.href SiteUrls.SpeakingUrl
-                ]
-                Html.text ", "
-                Html.a [ prop.text "podcaster"; prop.href "https://www.podvocasem.cz" ]
-                Html.text ", and a terrible drummer."
+            Html.text ", melomaniac, "
+            Html.a [
+                prop.text "speaker"
+                prop.href SiteUrls.SpeakingUrl
             ]
+            Html.text ", "
+            Html.a [ prop.text "podcaster"; prop.href "https://www.podvocasem.cz" ]
+            Html.text ", and a terrible drummer."
         ]
         Html.p "I have more than 20 years of experience with software development using languages like Pascal, Delphi, Prolog, PHP, C#, or F#, but I successfully managed to erase most of these languages from my brain."
         Html.p [
