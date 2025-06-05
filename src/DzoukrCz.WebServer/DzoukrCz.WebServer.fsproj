@@ -12,7 +12,10 @@
     <Compile Include="Templates\Header.fs" />
     <Compile Include="Templates\Footer.fs" />
     <Compile Include="Templates\Document.fs" />
-    <Compile Include="Pages\Index.fs" />
+    <Compile Include="Pages\Index\WebPage.fs" />
+    <Compile Include="Pages\Talks\Domain.fs" />
+    <Compile Include="Pages\Talks\Queries.fs" />
+    <Compile Include="Pages\Talks\WebPage.fs" />
     <Compile Include="WebApp.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

@@ -10,6 +10,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.MoonServer", "src\
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.WebServer", "src\DzoukrCz.WebServer\DzoukrCz.WebServer.fsproj", "{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.Libraries", "src\DzoukrCz.Libraries\DzoukrCz.Libraries.fsproj", "{791C990D-74FC-4D1C-BAF1-220938F2901A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{791C990D-74FC-4D1C-BAF1-220938F2901A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{791C990D-74FC-4D1C-BAF1-220938F2901A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{791C990D-74FC-4D1C-BAF1-220938F2901A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{791C990D-74FC-4D1C-BAF1-220938F2901A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99315B2D-96A5-48E8-9285-0FEAE277AE4E} = {9B3F13D5-FBC9-4FDE-ADEA-9F68EBBA89BC}

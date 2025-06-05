@@ -1,6 +1,8 @@
 ﻿module DzoukrCz.WebServer.Program
 
 open Azure.Storage.Blobs
+open DzoukrCz.WebServer.Pages.Talks.Domain
+open DzoukrCz.WebServer.Pages.Talks.Queries
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Hosting
@@ -26,16 +28,6 @@ let private configureWeb (builder:WebApplicationBuilder) =
     let apiKey = builder.Configuration.["ApiKey"]
     let apiSecret = builder.Configuration.["ApiSecret"]
 
-    // because of MoonServer
-    builder.Services.AddCors(fun opts ->
-        opts.AddDefaultPolicy (fun policy ->
-            policy
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowAnyOrigin()
-            |> ignore
-        )
-    ) |> ignore
     builder.Services.AddGiraffe() |> ignore
     // builder.Services.AddSingleton<Configuration>(
     //     {
@@ -48,12 +40,12 @@ let private configureWeb (builder:WebApplicationBuilder) =
     //     })
     //     |> ignore
     builder.Services.AddSingleton<BlobContainerClient>(BlobContainerClient(storageConnectionString, containerName)) |> ignore
+    builder.Services.AddSingleton<TalksQueries>(StorageTalksQueries()) |> ignore
     builder.Services.AddMemoryCache() |> ignore
     builder.WebHost.UseUrls("http://localhost:5000") |> ignore
     builder
 
 let private configureApp (app:WebApplication) =
-    app.UseCors() |> ignore
     app.UseStaticFiles() |> ignore
     app.UseGiraffe WebApp.webApp
     app

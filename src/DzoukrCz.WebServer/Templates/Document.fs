@@ -3,12 +3,12 @@ module DzoukrCz.WebServer.Templates.Document
 open Feliz.ViewEngine
 open DzoukrCz.WebServer
 
-let html (activeUrl:string)  (bodyContent:ReactElement) =
+let html (header:ReactElement) (activeUrl:string) (bodyContent:ReactElement) =
     let padding = "py-3 px-3 lg:py-5 lg:px-0"
     Html.html [
         prop.lang "en"
         prop.children [
-            Header.head
+            header
             Html.body [
                 prop.custom("data-theme","dark")
                 prop.className "h-screen"

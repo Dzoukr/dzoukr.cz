@@ -1,4 +1,4 @@
-module DzoukrCz.WebServer.Pages.Index
+module DzoukrCz.WebServer.Pages.Index.WebPage
 
 open Feliz.ViewEngine
 open DzoukrCz.WebServer
@@ -38,4 +38,4 @@ let private body =
         ]
     ]
 
-let page = Document.html SiteUrls.IndexUrl body
+let indexWebPage = Document.html Header.head SiteUrls.IndexUrl body

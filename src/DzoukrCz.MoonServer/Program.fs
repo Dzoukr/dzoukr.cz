@@ -2,6 +2,7 @@ module DzoukrCz.MoonServer.Program
 
 open Azure.Storage.Blobs
 open DzoukrCz.MoonServer.StoragePublisher
+open DzoukrCz.MoonServer.Security
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Hosting
@@ -44,6 +45,10 @@ let private configureWeb (builder:WebApplicationBuilder) =
             TableName = tableName
             ContainerName = containerName
             PathPrefix = pathPrefix
+        })
+        |> ignore
+    builder.Services.AddSingleton<ApiSecurity>(
+        {
             ApiKey = apiKey
             ApiSecret = apiSecret
         })

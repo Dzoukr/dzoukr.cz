@@ -3,6 +3,7 @@ module DzoukrCz.MoonServer.MoonServerAPI
 open System
 open System.IO
 open System.Text
+open DzoukrCz.MoonServer.Security
 open DzoukrCz.MoonServer.StoragePublisher
 open FsToolkit.ErrorHandling
 open Giraffe
@@ -127,111 +128,88 @@ let private getNewId (metadata:Metadata) =
     let i = Guid.NewGuid().ToString("N")
     $"{prefix}{i}"
 
-[<RequireQualifiedAccess>]
-module PostPublisher =
+// [<RequireQualifiedAccess>]
+// module PostPublisher =
+//
+//     let private tableToJArray (tr:MarkdownTools.TableReader) : JArray =
+//         let arr = JArray()
+//         for kv in tr.GetKeyValues() do
+//             let j = JObject()
+//             for (k,v) in kv do
+//                 j.Add(k, JValue(v))
+//             arr.Add(j)
+//         arr
+//
+//     let private writeToFile (publisher:Publisher) (filename:string) (jt:JToken) =
+//         task {
+//             use ms = new MemoryStream()
+//             use sw = new StreamWriter(ms, Encoding.UTF8)
+//             use jw = new JsonTextWriter(sw)
+//             do! jt.WriteToAsync(jw)
+//             jw.Flush()
+//             ms.Position <- 0L
+//             do! publisher.UpsertFile(filename, ms)
+//         }
+//
+//     let private setSharePropsOfBlogPost (i:string) (post:BlogPost) (o:JObject) =
+//         o.["Id"] <- i
+//         o.["Title"] <- post.Title
+//         o.["Url"] <- post.Url
+//         o.["Publish"] <- post.Publish.UtcDateTime.ToString("O")
+//         o.["Tags"] <- post.Tags |> Array.ofList |> JArray
+//         o.["Lang"] <- post.Lang
+//
+//     let private blogPostToJObject (i:string) (post:BlogPost) (content:string) =
+//         let o = JObject()
+//         o |> setSharePropsOfBlogPost i post
+//         o.["Content"] <- content
+//         o
+//
+//     let private blogPostToJObjectList (i:string) (post:BlogPost) =
+//         let o = JObject()
+//         o |> setSharePropsOfBlogPost i post
+//         o
+//
+//     let private tryToBlogPostJObject (pr:PublishResponse) =
+//         let m = pr.Metadata |> DataType.ofMetadata
+//         match m with
+//         | DataType.DataTable _ -> None
+//         | DataType.BlogPost pb -> Some (blogPostToJObjectList pr.Id pb)
+//
+//     let private reindexPosts (publisher:Publisher) (idToFilter:string option) =
+//         task {
+//             // create index
+//             let! all =
+//                 publisher.FindByPartition DataType.BPKey
+//                 |> Task.map (fun x ->
+//                     match idToFilter with
+//                     | Some i -> x |> List.filter (fun y -> y.Id <> i)
+//                     | None -> x
+//                 )
+//                 |> Task.map (List.choose tryToBlogPostJObject)
+//                 |> Task.map (fun x ->
+//                     let arr = JArray()
+//                     arr.Add(x)
+//                     arr
+//                 )
+//             do! writeToFile publisher $"blogposts.json" all
+//         }
+//     let private _postPublish (publisher:Publisher) (i:string) (detail:PublishResponse) (dataType:DataType) =
+//         task {
+//             match dataType with
+//             | DataTable data ->
+//                 let tables = detail.Content |> MarkdownTools.findTables
+//                 let arr = tables.[0] |> tableToJArray
+//                 do! writeToFile publisher $"{data.FileName}.json" arr
+//             | BlogPost post ->
+//                 let ob = detail.Content |> blogPostToJObject i post
+//                 do! writeToFile publisher $"blog/{i}.json" ob
+//                 do! reindexPosts publisher None
+//         }
+//
+//
 
-    let private tableToJArray (tr:MarkdownTools.TableReader) : JArray =
-        let arr = JArray()
-        for kv in tr.GetKeyValues() do
-            let j = JObject()
-            for (k,v) in kv do
-                j.Add(k, JValue(v))
-            arr.Add(j)
-        arr
 
-    let private writeToFile (publisher:Publisher) (filename:string) (jt:JToken) =
-        task {
-            use ms = new MemoryStream()
-            use sw = new StreamWriter(ms, Encoding.UTF8)
-            use jw = new JsonTextWriter(sw)
-            do! jt.WriteToAsync(jw)
-            jw.Flush()
-            ms.Position <- 0L
-            do! publisher.UpsertFile(filename, ms)
-        }
-
-    let private setSharePropsOfBlogPost (i:string) (post:BlogPost) (o:JObject) =
-        o.["Id"] <- i
-        o.["Title"] <- post.Title
-        o.["Url"] <- post.Url
-        o.["Publish"] <- post.Publish.UtcDateTime.ToString("O")
-        o.["Tags"] <- post.Tags |> Array.ofList |> JArray
-        o.["Lang"] <- post.Lang
-
-    let private blogPostToJObject (i:string) (post:BlogPost) (content:string) =
-        let o = JObject()
-        o |> setSharePropsOfBlogPost i post
-        o.["Content"] <- content
-        o
-
-    let private blogPostToJObjectList (i:string) (post:BlogPost) =
-        let o = JObject()
-        o |> setSharePropsOfBlogPost i post
-        o
-
-    let private tryToBlogPostJObject (pr:PublishResponse) =
-        let m = pr.Metadata |> DataType.ofMetadata
-        match m with
-        | DataType.DataTable _ -> None
-        | DataType.BlogPost pb -> Some (blogPostToJObjectList pr.Id pb)
-
-    let private reindexPosts (publisher:Publisher) (idToFilter:string option) =
-        task {
-            // create index
-            let! all =
-                publisher.FindByPartition DataType.BPKey
-                |> Task.map (fun x ->
-                    match idToFilter with
-                    | Some i -> x |> List.filter (fun y -> y.Id <> i)
-                    | None -> x
-                )
-                |> Task.map (List.choose tryToBlogPostJObject)
-                |> Task.map (fun x ->
-                    let arr = JArray()
-                    arr.Add(x)
-                    arr
-                )
-            do! writeToFile publisher $"blogposts.json" all
-        }
-    let private _postPublish (publisher:Publisher) (i:string) (detail:PublishResponse) (dataType:DataType) =
-        task {
-            match dataType with
-            | DataTable data ->
-                let tables = detail.Content |> MarkdownTools.findTables
-                let arr = tables.[0] |> tableToJArray
-                do! writeToFile publisher $"{data.FileName}.json" arr
-            | BlogPost post ->
-                let ob = detail.Content |> blogPostToJObject i post
-                do! writeToFile publisher $"blog/{i}.json" ob
-                do! reindexPosts publisher None
-        }
-
-    let postPublish (publisher:Publisher) (i:string) =
-        task {
-            let! detail = publisher.TryDetail i
-            let d = detail |> Option.map (fun x -> x.Metadata |> DataType.ofMetadata)
-            match detail, d with
-            | Some detail, Some datatype -> do! _postPublish publisher i detail datatype
-            | _ -> return ()
-        }
-
-    let private _preUnpublish (publisher:Publisher) (i:string) (detail:PublishResponse) (dataType:DataType) =
-        task {
-            match dataType with
-            | DataTable data -> do! publisher.DeleteFile data.FileName
-            | BlogPost _ ->
-                do! publisher.DeleteFile $"blog/{i}.json"
-                do! reindexPosts publisher (Some i)
-        }
-
-    let preUnpublish (publisher:Publisher) (i:string) =
-        task {
-            let! detail = publisher.TryDetail i
-            let d = detail |> Option.map (fun x -> x.Metadata |> DataType.ofMetadata)
-            match detail, d with
-            | Some detail, Some datatype -> do! _preUnpublish publisher i detail datatype
-            | _ -> return ()
-        }
 
 let private publish (i:string option) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
     task {
@@ -240,13 +218,11 @@ let private publish (i:string option) (publisher:Publisher) (next:HttpFunc) (ctx
         let attachments = j.attachments |> toMetadata |> List.map (fun (k,v) -> k, v.Value<string>())
         let pubId = i |> Option.orElse (tryFindId metadata) |> Option.defaultWith (fun _ -> getNewId metadata)
         let! _ = publisher.Publish({ Id = pubId; Metadata = metadata; Content = j.content; Name = j.name; Path = j.path; Attachments = attachments })
-        let! _ = PostPublisher.postPublish publisher pubId
         return! json {| id = pubId |} next ctx
     }
 
 let private unpublish (pubId:string) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
     task {
-        let! _ = PostPublisher.preUnpublish publisher pubId
         let! _ = publisher.Unpublish(pubId)
         return! json {| id = null |} next ctx
     }
@@ -269,7 +245,7 @@ let private detail (pubId:string) (publisher:Publisher) (next:HttpFunc) (ctx:Htt
             return Some ctx
     }
 
-let private onlyWithKeyAndSecret (p:Publisher) : HttpHandler =
+let private onlyWithKeyAndSecret (p:ApiSecurity) : HttpHandler =
     fun (next:HttpFunc) (ctx:HttpContext) ->
         task {
             match ctx.TryGetRequestHeader("Api-Key"), ctx.TryGetRequestHeader("Api-Secret") with
@@ -285,9 +261,9 @@ let private onlyWithKeyAndSecret (p:Publisher) : HttpHandler =
         }
 
 let api : HttpHandler =
-    Require.services<ILogger<_>, Publisher> (fun logger publisher ->
+    Require.services<ILogger<_>, Publisher, ApiSecurity> (fun logger publisher security ->
         choose [
-            POST >=> onlyWithKeyAndSecret publisher >=> choose [
+            POST >=> onlyWithKeyAndSecret security >=> choose [
                 routeCif "/unpublish/%s" (fun (s:string) -> unpublish s publisher)
                 routeCif "/publish/%s"  (fun (s:string) -> publish (Some s) publisher)
                 routeCi "/publish" >=> publish None publisher

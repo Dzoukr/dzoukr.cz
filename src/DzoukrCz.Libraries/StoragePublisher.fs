@@ -51,8 +51,6 @@ type PublishResponse = {
     CreatedAt : DateTimeOffset
 }
 
-
-
 module LinkParser =
     open System.IO
     open System.Text.RegularExpressions
@@ -203,8 +201,6 @@ type Configuration = {
     TableName : string
     ContainerName : string
     PathPrefix : string
-    ApiKey : string
-    ApiSecret :string
 }
 with
     member this.SafeContainerName = this.ContainerName |> key
@@ -238,9 +234,6 @@ type Publisher(cfg:Configuration) =
                 let! _ = blobClient.UploadBlobAsync(filename, BinaryData.FromBytes(Convert.FromBase64String(f.Base64Payload)))
                 ()
         }
-
-    member _.ApiKey = cfg.ApiKey
-    member _.ApiSecret = cfg.ApiSecret
 
     member _.Publish(data:PublishRequest) =
         task {

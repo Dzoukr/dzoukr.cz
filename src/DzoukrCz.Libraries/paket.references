@@ -1,0 +1,6 @@
+Azure.Storage.Blobs
+Azure.Data.Tables
+Tables.FSharp
+FsToolkit.ErrorHandling.TaskResult
+FSharp.Control.AsyncSeq
+Newtonsoft.Json
