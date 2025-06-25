@@ -25,5 +25,8 @@
             <CopyToPublishDirectory>Never</CopyToPublishDirectory>
         </Content>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\DzoukrCz.Libraries\DzoukrCz.Libraries.fsproj" />
+    </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

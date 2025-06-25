@@ -5,6 +5,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="MarkdownTools.fs" />
+    <Compile Include="Publisher.fs" />
     <Compile Include="StoragePublisher.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

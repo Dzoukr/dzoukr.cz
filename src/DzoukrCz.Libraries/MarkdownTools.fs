@@ -1,4 +1,4 @@
-module DzoukrCz.MoonServer.MarkdownTools
+module DzoukrCz.Libraries.MarkdownTools
 
 open System
 open System.Collections.Generic

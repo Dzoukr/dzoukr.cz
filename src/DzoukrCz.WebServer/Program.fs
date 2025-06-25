@@ -1,6 +1,8 @@
 ﻿module DzoukrCz.WebServer.Program
 
 open Azure.Storage.Blobs
+open DzoukrCz.Libraries.Publisher
+open DzoukrCz.Libraries.StoragePublisher
 open DzoukrCz.WebServer.Pages.Talks.Domain
 open DzoukrCz.WebServer.Pages.Talks.Queries
 open Microsoft.AspNetCore.Builder
@@ -25,22 +27,18 @@ let private configureWeb (builder:WebApplicationBuilder) =
     let tableName = builder.Configuration.["TableName"]
     let containerName = builder.Configuration.["ContainerName"]
     let pathPrefix = builder.Configuration.["PathPrefix"]
-    let apiKey = builder.Configuration.["ApiKey"]
-    let apiSecret = builder.Configuration.["ApiSecret"]
 
     builder.Services.AddGiraffe() |> ignore
-    // builder.Services.AddSingleton<Configuration>(
-    //     {
-    //         ConnectionString = storageConnectionString
-    //         TableName = tableName
-    //         ContainerName = containerName
-    //         PathPrefix = pathPrefix
-    //         ApiKey = apiKey
-    //         ApiSecret = apiSecret
-    //     })
-    //     |> ignore
-    builder.Services.AddSingleton<BlobContainerClient>(BlobContainerClient(storageConnectionString, containerName)) |> ignore
-    builder.Services.AddSingleton<TalksQueries>(StorageTalksQueries()) |> ignore
+    builder.Services.AddSingleton<StoragePublisherConfiguration>(
+        {
+            ConnectionString = storageConnectionString
+            TableName = tableName
+            ContainerName = containerName
+            PathPrefix = pathPrefix
+        })
+        |> ignore
+    builder.Services.AddSingleton<TalksQueries, StorageTalksQueries>() |> ignore
+    builder.Services.AddSingleton<Publisher, StoragePublisher>() |> ignore
     builder.Services.AddMemoryCache() |> ignore
     builder.WebHost.UseUrls("http://localhost:5000") |> ignore
     builder

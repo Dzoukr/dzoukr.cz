@@ -3,8 +3,3 @@ Giraffe
 Giraffe.GoodRead
 Fable.Remoting.Giraffe
 FsToolkit.ErrorHandling.TaskResult
-Azure.Storage.Blobs
-Azure.Data.Tables
-Tables.FSharp
-FSharp.Control.AsyncSeq
-Markdig

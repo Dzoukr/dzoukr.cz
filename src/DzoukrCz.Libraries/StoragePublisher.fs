@@ -1,4 +1,4 @@
-module DzoukrCz.MoonServer.StoragePublisher
+module DzoukrCz.Libraries.StoragePublisher
 
 open System
 open System.Collections.Generic
@@ -8,8 +8,11 @@ open Azure.Data.Tables
 open Azure.Data.Tables.FSharp
 open Azure.Storage.Blobs
 open FSharp.Control
-open Newtonsoft.Json
-open Newtonsoft.Json.Linq
+open System.Text.Json
+open System.Text.Json.Nodes
+open DzoukrCz.Libraries.Publisher
+
+let jsonOptions = JsonSerializerOptions(WriteIndented = false)
 
 let private key (s:string) =
     ["/";"\\";"#";"?"]
@@ -17,6 +20,8 @@ let private key (s:string) =
     |> (fun x -> x.ToLowerInvariant().Trim())
 
 let pkDelimiter = "-"
+let pkKey = "pk"
+let pkDefault = "misc"
 
 let private partitionAndRow (s:string) =
     let parts = s.Split(pkDelimiter)
@@ -31,25 +36,14 @@ let private tryDateTimeOffsetUTC (s:string) =
     | true, dt -> Some dt
     | _ -> None
 
-type Metadata = (string * JToken) list
-
-type PublishRequest = {
-    Id : string
-    Name : string
-    Path : string
-    Content : string
-    Metadata : Metadata
-    Attachments : (string * string) list
-}
-
-type PublishResponse = {
-    Id : string
-    Name : string
-    Path : string
-    Content : string
-    Metadata : Metadata
-    CreatedAt : DateTimeOffset
-}
+let private getNewId (metadata:Metadata) =
+    let pk =
+        metadata
+        |> List.tryFind (fun (k,_) -> String.Compare(k, pkKey, StringComparison.InvariantCultureIgnoreCase) = 0)
+        |> Option.map (fun (_,v) -> v.ToString())
+        |> Option.defaultValue pkDefault
+    let i = Guid.NewGuid().ToString("N")
+    $"{pk}{pkDelimiter}{i}"
 
 module LinkParser =
     open System.IO
@@ -94,8 +88,6 @@ module LinkParser =
             }
         )
         |> Seq.toList
-
-
 
     let private getSrcAndAlt (s:string) =
         let pattern = "(.+)(\s\"(.+)\")"
@@ -165,15 +157,15 @@ module LinkParser =
         replaces |> List.fold folder markdown
 
 module TableStorage =
-    let toEntity (data:PublishRequest) =
-        let partition,row = data.Id |> partitionAndRow
+    let toEntity id name path content (meta:Metadata) =
+        let partition,row = id |> partitionAndRow
         let entity = TableEntity(partition, row)
-        entity.Add("Name", data.Name)
-        entity.Add("Path", data.Path)
-        entity.Add("Content", data.Content)
-        for k,v in data.Metadata |> List.filter (fun (x,_) -> x.ToLowerInvariant() <> "id") do
+        entity.Add("Name", name)
+        entity.Add("Path", path)
+        entity.Add("Content", content)
+        for k,v in meta |> List.filter (fun (x,_) -> String.Compare(x,"id",StringComparison.InvariantCultureIgnoreCase) <> 0) do
             let name = $"meta_{k}"
-            entity.Add(name, v.ToString(Formatting.None))
+            entity.Add(name, v.ToJsonString(jsonOptions))
         entity
     let toData (e:TableEntity) : PublishResponse =
         let meta =
@@ -182,10 +174,10 @@ module TableStorage =
             |> Seq.map (fun x ->
                 let key = x.Key.Replace("meta_", "")
                 let value = x.Value.ToString()
-                key, JToken.Parse(value)
+                key, JsonNode.Parse(value)
             )
             |> Seq.toList
-            |> List.append [("id", JValue(e.PartitionKey))]
+            |> List.append [("id", JsonValue.Create(e.PartitionKey))]
 
         {
             Id = e.PartitionKey + pkDelimiter + e.RowKey
@@ -196,7 +188,7 @@ module TableStorage =
             CreatedAt = e.Timestamp |> Option.ofNullable |> Option.defaultWith (fun _ -> DateTimeOffset.Now)
         }
 
-type Configuration = {
+type StoragePublisherConfiguration = {
     ConnectionString : string
     TableName : string
     ContainerName : string
@@ -205,7 +197,7 @@ type Configuration = {
 with
     member this.SafeContainerName = this.ContainerName |> key
 
-type Publisher(cfg:Configuration) =
+type StoragePublisher(cfg:StoragePublisherConfiguration) =
     let tableClient = TableClient(cfg.ConnectionString, cfg.TableName)
     let blobClient = BlobContainerClient(cfg.ConnectionString, cfg.SafeContainerName)
 
@@ -235,83 +227,71 @@ type Publisher(cfg:Configuration) =
                 ()
         }
 
-    member _.Publish(data:PublishRequest) =
-        task {
-            // table
-            let! _ = tableClient.CreateIfNotExistsAsync()
-            let replaces = data.Content |> LinkParser.parse |> LinkParser.withReplacement data.Attachments
-            let newData = { data with Content = replaces |> LinkParser.applyReplacements (idBasedPrefix data.Id) data.Content }
-            let entity = newData |> TableStorage.toEntity
-            let! _ = tableClient.UpsertEntityAsync(entity, TableUpdateMode.Replace)
+    interface Publisher with
+        member _.Publish(data:PublishRequest) =
+            task {
+                // table
+                let! _ = tableClient.CreateIfNotExistsAsync()
+                let id = data.Id |> Option.defaultWith (fun _ -> getNewId data.Metadata)
+                let replaces = data.Content |> LinkParser.parse |> LinkParser.withReplacement data.Attachments
+                let newData = { data with Content = replaces |> LinkParser.applyReplacements (idBasedPrefix id) data.Content }
+                let entity = TableStorage.toEntity id newData.Name newData.Path newData.Content newData.Metadata
+                let! _ = tableClient.UpsertEntityAsync(entity, TableUpdateMode.Replace)
 
-            // blobs
-            let! _ = blobClient.CreateIfNotExistsAsync()
-            do! cleanContainer data.Id
-            do! uploadFiles data.Id replaces
-            return ()
-        }
-    member _.Unpublish(i:string) =
-        task {
-            // table
-            let partition,row = i |> partitionAndRow
-            let! _ = tableClient.CreateIfNotExistsAsync()
-            let! _ = tableClient.DeleteEntityAsync(key partition, key row)
-            // blobs
-            let! _ = blobClient.CreateIfNotExistsAsync()
-            do! cleanContainer i
-            return ()
-        }
+                // blobs
+                let! _ = blobClient.CreateIfNotExistsAsync()
+                do! cleanContainer id
+                do! uploadFiles id replaces
+                return id
+            }
 
-    member _.TryDetail (i:string) =
-        task {
-            let! _ = tableClient.CreateIfNotExistsAsync()
-            let partition,row = i |> partitionAndRow
-            return
-                tableQuery {
-                    filter (pk partition + rk row)
-                }
-                |> tableClient.Query<TableEntity>
-                |> Seq.map TableStorage.toData
-                |> Seq.tryHead
-        }
+        member _.Unpublish(i:string) =
+            task {
+                // table
+                let partition,row = i |> partitionAndRow
+                let! _ = tableClient.CreateIfNotExistsAsync()
+                let! _ = tableClient.DeleteEntityAsync(key partition, key row)
+                // blobs
+                let! _ = blobClient.CreateIfNotExistsAsync()
+                do! cleanContainer i
+                return ()
+            }
 
-    member _.UpsertFile (name:string, content:System.IO.Stream) =
-        task {
-            let! _ = blobClient.CreateIfNotExistsAsync()
-            let blob = blobClient.GetBlobClient(name)
-            let! _ = blob.UploadAsync(BinaryData.FromStream(content), true)
-            return ()
-        }
+        member _.TryDetail (i:string) =
+            task {
+                let! _ = tableClient.CreateIfNotExistsAsync()
+                let partition,row = i |> partitionAndRow
+                return
+                    tableQuery {
+                        filter (pk partition + rk row)
+                    }
+                    |> tableClient.Query<TableEntity>
+                    |> Seq.map TableStorage.toData
+                    |> Seq.tryHead
+            }
 
-    member _.DeleteFile (name:string) =
-        task {
-            let! _ = blobClient.CreateIfNotExistsAsync()
-            let blob = blobClient.GetBlobClient(name)
-            let! _ = blob.DeleteIfExistsAsync()
-            return ()
-        }
+        member _.FindByMetadataEq (partitionKey:string option, name:string, value:JsonNode) : Task<PublishResponse list> =
+            task {
+                let! _ = tableClient.CreateIfNotExistsAsync()
+                let partitionKey = partitionKey |> Option.defaultValue pkDefault
+                return
+                    tableQuery {
+                        filter (pk partitionKey + eq $"meta_{name}" (value.ToJsonString(jsonOptions)))
+                    }
+                    |> tableClient.Query<TableEntity>
+                    |> Seq.map TableStorage.toData
+                    |> Seq.toList
+            }
 
-
-    member _.FindByMetadataEq (partitionKey:string, name:string, value:JToken) : Task<PublishResponse list> =
-        task {
-            let! _ = tableClient.CreateIfNotExistsAsync()
-            return
-                tableQuery {
-                    filter (pk partitionKey + eq $"meta_{name}" (value.ToString(Formatting.None)))
-                }
-                |> tableClient.Query<TableEntity>
-                |> Seq.map TableStorage.toData
-                |> Seq.toList
-        }
-
-    member _.FindByPartition (partitionKey:string) : Task<PublishResponse list> =
-        task {
-            let! _ = tableClient.CreateIfNotExistsAsync()
-            return
-                tableQuery {
-                    filter (pk partitionKey)
-                }
-                |> tableClient.Query<TableEntity>
-                |> Seq.map TableStorage.toData
-                |> Seq.toList
-        }
+        member _.FindByPartition (partitionKey:string option) : Task<PublishResponse list> =
+            task {
+                let! _ = tableClient.CreateIfNotExistsAsync()
+                let partitionKey = partitionKey |> Option.defaultValue pkDefault
+                return
+                    tableQuery {
+                        filter (pk partitionKey)
+                    }
+                    |> tableClient.Query<TableEntity>
+                    |> Seq.map TableStorage.toData
+                    |> Seq.toList
+            }
