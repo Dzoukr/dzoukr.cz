@@ -27,7 +27,7 @@ type private Msg =
 
 let private init () =
     {
-        Stats = { Talks = "30"; Episodes = "55"; Downloads = "790k+" }
+        Stats = { Talks = "30"; Episodes = "60+"; Downloads = "790k+" }
     }, Cmd.ofMsg LoadStats
 
 let private getEpisodes () =
@@ -109,12 +109,7 @@ let IndexView () =
                 Html.divClassed "lg:col-span-3" [
                     Html.h1 "👋 Hi, I'm Roman"
 
-                    Html.text "I am a Head of Product Engineering at "
-                    Html.a [
-                        prop.text "Ciklum Czech Republic & Slovakia"
-                        prop.href "https://www.ciklum.com/we"
-                    ]
-                    Html.text ", melomaniac, "
+                    Html.text "I am a Head of Product Engineering, melomaniac, "
                     Html.a [
                         prop.text "speaker"
                         yield! prop.hrefRouted (Web Talks)
