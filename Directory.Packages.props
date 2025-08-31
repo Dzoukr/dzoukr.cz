@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Azure -->
+    <PackageVersion Include="Azure.Storage.Blobs" Version="12.19.1" />
+    <PackageVersion Include="Azure.Data.Tables" Version="12.11.0" />
+    <PackageVersion Include="Tables.FSharp" Version="1.0.0" />
+    
+    <!-- ASP.NET -->
+    <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+    <PackageVersion Include="Giraffe" Version="6.2.0" />
+    <PackageVersion Include="Giraffe.GoodRead" Version="2.1.0" />
+    
+    <!-- Fable -->
+    <PackageVersion Include="Fable.Core" Version="4.3.0" />
+    <PackageVersion Include="Fable.React" Version="9.3.0" />
+    <PackageVersion Include="Fable.Remoting.Client" Version="7.32.0" />
+    <PackageVersion Include="Fable.Remoting.Giraffe" Version="5.16.0" />
+    <PackageVersion Include="Fable.SimpleHttp" Version="3.6.0" />
+    
+    <!-- Feliz -->
+    <PackageVersion Include="Feliz" Version="2.7.0" />
+    <PackageVersion Include="Feliz.Router" Version="4.0.0" />
+    <PackageVersion Include="Feliz.DaisyUI" Version="4.2.0" />
+    <PackageVersion Include="Feliz.UseElmish" Version="2.5.0" />
+    <PackageVersion Include="Feliz.ViewEngine" Version="0.27.0" />
+    
+    <!-- FSharp -->
+    <PackageVersion Include="FSharp.Core" Version="7.0.300" />
+    <PackageVersion Include="FsToolkit.ErrorHandling.TaskResult" Version="4.10.0" />
+    <PackageVersion Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
+    
+    <!-- Build Tools -->
+    <PackageVersion Include="Fake.Core.Target" Version="6.0.0" />
+    <PackageVersion Include="Fake.DotNet.Cli" Version="6.0.0" />
+    <PackageVersion Include="Fake.IO.FileSystem" Version="6.0.0" />
+    
+    <!-- Other -->
+    <PackageVersion Include="Markdig" Version="0.34.0" />
+  </ItemGroup>
+</Project>

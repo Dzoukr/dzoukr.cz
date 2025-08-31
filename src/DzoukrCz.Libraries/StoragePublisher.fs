@@ -21,7 +21,7 @@ let private key (s:string) =
 
 let pkDelimiter = "-"
 let pkKey = "pk"
-let pkDefault = "misc"
+let pkDefault = "default"
 
 let private partitionAndRow (s:string) =
     let parts = s.Split(pkDelimiter)

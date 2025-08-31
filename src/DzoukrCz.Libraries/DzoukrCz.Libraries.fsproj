@@ -9,5 +9,12 @@
     <Compile Include="Publisher.fs" />
     <Compile Include="StoragePublisher.fs" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" />
+    <PackageReference Include="Azure.Data.Tables" />
+    <PackageReference Include="Tables.FSharp" />
+    <PackageReference Include="FsToolkit.ErrorHandling.TaskResult" />
+    <PackageReference Include="FSharp.Control.AsyncSeq" />
+    <PackageReference Include="Markdig" />
+  </ItemGroup>
 </Project>

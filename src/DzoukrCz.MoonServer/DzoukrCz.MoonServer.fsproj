@@ -13,5 +13,11 @@
   <ItemGroup>
     <ProjectReference Include="..\DzoukrCz.Libraries\DzoukrCz.Libraries.fsproj" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
+    <PackageReference Include="Giraffe" />
+    <PackageReference Include="Giraffe.GoodRead" />
+    <PackageReference Include="Fable.Remoting.Giraffe" />
+    <PackageReference Include="FsToolkit.ErrorHandling.TaskResult" />
+  </ItemGroup>
 </Project>
