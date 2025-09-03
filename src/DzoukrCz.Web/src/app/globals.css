@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "@tailwindcss/typography";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+a:not(.btn, .not-a) {
+    @apply text-warning underline;
+    &:hover {
+        @apply opacity-80;
+    }
+}
+
+.formatted-text {
+    @apply prose prose-base lg:prose-lg max-w-none;
+}

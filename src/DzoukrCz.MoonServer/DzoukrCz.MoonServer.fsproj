@@ -2,14 +2,22 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="StoragePublisher.fs" />
-    <Compile Include="MarkdownTools.fs" />
+    <Compile Include="Security.fs" />
     <Compile Include="MoonServerAPI.fs" />
     <Compile Include="WebApp.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-  <Import Project="..\..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\DzoukrCz.Libraries\DzoukrCz.Libraries.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />
+    <PackageReference Include="Giraffe" />
+    <PackageReference Include="Giraffe.GoodRead" />
+    <PackageReference Include="Fable.Remoting.Giraffe" />
+    <PackageReference Include="FsToolkit.ErrorHandling.TaskResult" />
+  </ItemGroup>
 </Project>

@@ -1,8 +1,10 @@
 module DzoukrCz.MoonServer.Program
 
 open Azure.Storage.Blobs
-open DzoukrCz.MoonServer.StoragePublisher
+open DzoukrCz.Libraries.StoragePublisher
+open DzoukrCz.MoonServer.Security
 open Microsoft.AspNetCore.Builder
+open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
@@ -37,19 +39,23 @@ let private configureWeb (builder:WebApplicationBuilder) =
         )
     ) |> ignore
     builder.Services.AddGiraffe() |> ignore
-    builder.Services.AddSingleton<Configuration>(
+    builder.Services.AddSingleton<StoragePublisherConfiguration>(
         {
             ConnectionString = storageConnectionString
             TableName = tableName
             ContainerName = containerName
             PathPrefix = pathPrefix
+        })
+        |> ignore
+    builder.Services.AddSingleton<ApiSecurity>(
+        {
             ApiKey = apiKey
             ApiSecret = apiSecret
         })
         |> ignore
-    builder.Services.AddSingleton<BlobContainerClient>(BlobContainerClient(storageConnectionString, containerName)) |> ignore
-    builder.Services.AddScoped<Publisher>() |> ignore
+    builder.Services.AddScoped<StoragePublisher>() |> ignore
     builder.Services.AddMemoryCache() |> ignore
+    builder.WebHost.UseUrls("http://localhost:5001") |> ignore
     builder
 
 let private configureApp (app:WebApplication) =
