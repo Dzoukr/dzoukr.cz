@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html>
-      <body data-theme="dark" className="h-screen">
+      <body data-theme="dark" className="min-h-screen">
         {children}
       </body>
     </html>
