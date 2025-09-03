@@ -79,7 +79,8 @@ export default async function Speaking() {
     <PageLayout forPage="/speaking">
       <div className="formatted-text">
         <h1>Speaking</h1>
-        <p>Here you can find a list of my talks and events I have attended as a speaker.</p>
+        <p>Here you can find a list of my talks and events I have attended as a speaker. If you want me to speak at your event, please don't hesitate to&nbsp;
+          <Link href="/contacts">contact me</Link>.</p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {events.reverse().map((event, index) => (

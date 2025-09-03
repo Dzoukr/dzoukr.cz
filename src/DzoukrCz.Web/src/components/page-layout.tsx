@@ -1,29 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
+import { TopMenu } from './top-menu'
 
-function TopMenuItem({ link, name, activeLink }: { link: string, name: string, activeLink: string }) {
-    const isActive = link === activeLink ? "text-neutral bg-neutral border outline rounded-sm" : ""
-    return (
-        <Link href={link} className={`text-2xl text-warning py-2 px-4 not-a ${isActive}`}>{name}</Link>
-    )
-}
-
-function TopMenu({ forPage } : { forPage: string }) {
-    return (
-        <nav className="navbar">
-            <div className="navbar-start">
-                <Link href="/" className="text-3xl font-bold text-white not-a">
-                    &lt;džoukr<span className="text-warning">.cz/&gt;</span>
-                </Link>
-            </div>
-            <div className="navbar-center"></div>
-            <div className="navbar-end">
-                <TopMenuItem activeLink={forPage} link="/" name="home" />
-                <TopMenuItem activeLink={forPage} link="/speaking" name="speaking" />
-            </div>
-        </nav>
-    )
-}
 
 function IconLink({ icon, label, href }: { icon: string; label: string; href: string }) {
   return (
@@ -36,7 +14,7 @@ function IconLink({ icon, label, href }: { icon: string; label: string; href: st
 
 function Footer() {
   return (
-    <div className="footer footer-vertical lg:footer-horizontal max-w-4xl mx-auto py-5 px-5 lg:px-0">
+    <div className="footer footer-vertical lg:footer-horizontal max-w-4xl mx-auto py-5 lg:px-0">
       <nav>
         <p>Roman &quot;Džoukr&quot; Provazník</p>
         <p className="text-xs opacity-90">Building software with ❤️ + 🧠</p>
