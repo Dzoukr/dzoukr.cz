@@ -7,7 +7,7 @@ export default function Home() {
     <PageLayout forPage="/">
       <div className="formatted-text">
         
-        <Image src={"/profile.png"} alt="Roman" width={300} height={300} className="not-prose mx-auto lg:float-left mb-6 lg:my-0 lg:mr-8 w-[60%] lg:w-[30%] object-cover rounded-xl" />
+        <Image src={"/img/profile.png"} alt="Roman" width={300} height={300} className="not-prose mx-auto lg:float-left mb-6 lg:my-0 lg:mr-8 w-[60%] lg:w-[30%] object-cover rounded-xl" />
 
         <h1>👋 Hi, I&apos;m Roman</h1>
 

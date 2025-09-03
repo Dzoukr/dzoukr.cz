@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 function TopMenuItem({ link, name, activeLink }: { link: string, name: string, activeLink: string }) {
-    const isActive = link === activeLink ? "text-neutral bg-neutral outline rounded-sm" : ""
+    const isActive = link === activeLink ? "text-neutral bg-neutral border outline rounded-sm" : ""
     return (
         <Link href={link} className={`text-2xl text-warning py-2 px-4 not-a ${isActive}`}>{name}</Link>
     )
@@ -12,7 +12,7 @@ function TopMenu({ forPage } : { forPage: string }) {
     return (
         <nav className="navbar">
             <div className="navbar-start">
-                <Link href="/" className="text-4xl font-bold text-white not-a">
+                <Link href="/" className="text-3xl font-bold text-white not-a">
                     &lt;džoukr<span className="text-warning">.cz/&gt;</span>
                 </Link>
             </div>
