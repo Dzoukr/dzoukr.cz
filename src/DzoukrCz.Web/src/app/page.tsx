@@ -6,10 +6,9 @@ export default function Home() {
   return (
     <PageLayout forPage="/">
       <div className="formatted-text">
+        <h1>👋 Hi, I&apos;m Roman</h1>
         
         <Image src={"/img/profile.png"} alt="Roman" width={300} height={300} className="not-prose mx-auto lg:float-left mb-6 lg:my-0 lg:mr-8 w-[60%] lg:w-[30%] object-cover rounded-xl" />
-
-        <h1>👋 Hi, I&apos;m Roman</h1>
 
         <p>
           I am a Head of Product Engineering at&nbsp;

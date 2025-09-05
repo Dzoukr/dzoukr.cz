@@ -68,7 +68,7 @@ function Footer() {
 
 export function PageLayout({forPage, children}: {forPage: string, children: React.ReactNode}) {
   return (
-    <div className="grow max-w-4xl mx-auto py-3 px-3 lg:py-6 lg:px-0 flex flex-col gap-3 lg:gap-6">
+    <div className="grow max-w-5xl mx-auto py-3 px-3 lg:py-6 flex flex-col gap-3 lg:gap-6">
       <TopMenu forPage={forPage} />
       <hr className="text-gray-700" />
       {children}

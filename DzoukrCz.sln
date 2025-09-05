@@ -1,14 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.Client", "src\DzoukrCz.Client\DzoukrCz.Client.fsproj", "{7C716DBC-68B5-462F-9E3D-F9D2D30E480F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{9B3F13D5-FBC9-4FDE-ADEA-9F68EBBA89BC}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Build", "Build.fsproj", "{99315B2D-96A5-48E8-9285-0FEAE277AE4E}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.MoonServer", "src\DzoukrCz.MoonServer\DzoukrCz.MoonServer.fsproj", "{978F1136-4A35-4AB3-ADFB-1E9121303EBE}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.WebServer", "src\DzoukrCz.WebServer\DzoukrCz.WebServer.fsproj", "{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DzoukrCz.Libraries", "src\DzoukrCz.Libraries\DzoukrCz.Libraries.fsproj", "{791C990D-74FC-4D1C-BAF1-220938F2901A}"
 EndProject
@@ -18,28 +10,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7C716DBC-68B5-462F-9E3D-F9D2D30E480F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C716DBC-68B5-462F-9E3D-F9D2D30E480F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C716DBC-68B5-462F-9E3D-F9D2D30E480F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C716DBC-68B5-462F-9E3D-F9D2D30E480F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99315B2D-96A5-48E8-9285-0FEAE277AE4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99315B2D-96A5-48E8-9285-0FEAE277AE4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99315B2D-96A5-48E8-9285-0FEAE277AE4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99315B2D-96A5-48E8-9285-0FEAE277AE4E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{978F1136-4A35-4AB3-ADFB-1E9121303EBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{978F1136-4A35-4AB3-ADFB-1E9121303EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{978F1136-4A35-4AB3-ADFB-1E9121303EBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{978F1136-4A35-4AB3-ADFB-1E9121303EBE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D7FB63D-FE21-4A41-847A-C266EE8A2DA5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{791C990D-74FC-4D1C-BAF1-220938F2901A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{791C990D-74FC-4D1C-BAF1-220938F2901A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{791C990D-74FC-4D1C-BAF1-220938F2901A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{791C990D-74FC-4D1C-BAF1-220938F2901A}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{99315B2D-96A5-48E8-9285-0FEAE277AE4E} = {9B3F13D5-FBC9-4FDE-ADEA-9F68EBBA89BC}
 	EndGlobalSection
 EndGlobal
