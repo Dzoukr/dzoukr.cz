@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/DzoukrCz.Web/**'
       - '.github/workflows/Web.yml'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
