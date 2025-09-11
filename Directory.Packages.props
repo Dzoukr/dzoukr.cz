@@ -11,7 +11,7 @@
     
     <!-- ASP.NET -->
     <PackageVersion Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
-    <PackageVersion Include="Giraffe" Version="6.2.0" />
+    <PackageVersion Include="Giraffe" Version="7.0.2" />
     <PackageVersion Include="Giraffe.GoodRead" Version="2.1.0" />
     
     <!-- Fable -->

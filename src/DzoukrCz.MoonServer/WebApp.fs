@@ -1,8 +1,8 @@
 ﻿module DzoukrCz.MoonServer.WebApp
 
-open Giraffe
-
-let webApp : HttpHandler =
-    choose [
+let webApp =
+    [
         MoonServerAPI.api
+        DataAPI.api
     ]
+    |> List.concat

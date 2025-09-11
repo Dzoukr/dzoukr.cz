@@ -10,6 +10,7 @@ open DzoukrCz.Libraries.Publisher
 open FsToolkit.ErrorHandling
 open Giraffe
 open Giraffe.GoodRead
+open Giraffe.EndpointRouting
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
 open System.Linq
@@ -32,7 +33,7 @@ let private toMetadata (j:JsonObject) =
 let private toJObject (data:Metadata) =
     let j = JsonObject()
     for (k,v) in data do
-        j.Add(k,v)
+        j[k] <- v
     j
 
 let private publish (somePubId:string option) (publisher:Publisher) (next:HttpFunc) (ctx:HttpContext) =
@@ -83,14 +84,18 @@ let private onlyWithKeyAndSecret (p:ApiSecurity) : HttpHandler =
                 return Some ctx
         }
 
-let api : HttpHandler =
-    Require.services<ILogger<_>, Publisher, ApiSecurity> (fun logger publisher security ->
-        choose [
-            POST >=> onlyWithKeyAndSecret security >=> choose [
-                routeCif "/unpublish/%s" (fun (s:string) -> unpublish s publisher)
-                routeCif "/publish/%s"  (fun (s:string) -> publish (Some s) publisher)
-                routeCi "/publish" >=> publish None publisher
-            ]
-            GET >=> routeCif "/detail/%s" (fun (s:string) -> detail s publisher)
+let private withSecuredPublisher handler : HttpHandler =
+    Require.services<Publisher, ApiSecurity> (fun publisher security ->
+        onlyWithKeyAndSecret security >=> handler publisher)
+
+let api =
+    [
+        POST [
+            routef "/unpublish/%s" (fun i -> withSecuredPublisher (unpublish i))
+            routef "/publish/%s" (fun i -> withSecuredPublisher (publish (Some i)))
+            route "/publish" (withSecuredPublisher (publish None))
         ]
-    )
+        GET [
+            routef "/detail/%s" (fun i -> withSecuredPublisher (detail i))
+        ]
+    ]

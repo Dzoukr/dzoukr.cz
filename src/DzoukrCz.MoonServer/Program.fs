@@ -9,6 +9,8 @@ open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
+open Giraffe.EndpointRouting
+open DzoukrCz.Libraries.Publisher
 
 let private configureLogging (builder: WebApplicationBuilder) =
     builder.Host.ConfigureLogging(fun x ->
@@ -53,17 +55,18 @@ let private configureWeb (builder:WebApplicationBuilder) =
             ApiSecret = apiSecret
         })
         |> ignore
-    builder.Services.AddScoped<StoragePublisher>() |> ignore
+    builder.Services.AddScoped<Publisher, StoragePublisher>() |> ignore
     builder.Services.AddMemoryCache() |> ignore
-    builder.WebHost.UseUrls("http://localhost:5001") |> ignore
+    
     builder
 
 let private configureApp (app:WebApplication) =
     app.UseCors() |> ignore
-    app.UseGiraffe WebApp.webApp
+    app.UseRouting() |> ignore
+    app.UseEndpoints(fun e -> e.MapGiraffeEndpoints(WebApp.webApp)) |> ignore
     app
 
-let private builderOptions = WebApplicationOptions(WebRootPath = "public")
+let private builderOptions = WebApplicationOptions()
 let private builder =
     WebApplication.CreateBuilder(builderOptions)
     |> addApplicationInsights

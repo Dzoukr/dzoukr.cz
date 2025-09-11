@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="Security.fs" />
     <Compile Include="MoonServerAPI.fs" />
+    <Compile Include="DataAPI.fs" />
     <Compile Include="WebApp.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

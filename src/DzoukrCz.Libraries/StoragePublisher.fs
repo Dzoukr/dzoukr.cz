@@ -17,7 +17,7 @@ let jsonOptions = JsonSerializerOptions(WriteIndented = false)
 let private key (s:string) =
     ["/";"\\";"#";"?"]
     |> List.fold (fun (acc:string) item -> acc.Replace(item, "")) s
-    |> (fun x -> x.ToLowerInvariant().Trim())
+    |> _.ToLowerInvariant().Trim()
 
 let pkDelimiter = "-"
 let pkKey = "pk"
@@ -30,11 +30,6 @@ let private partitionAndRow (s:string) =
     else
         parts.[0], parts.[1]
     |> fun (x,y) -> key x, key y
-
-let private tryDateTimeOffsetUTC (s:string) =
-    match DateTimeOffset.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal ||| DateTimeStyles.AdjustToUniversal) with
-    | true, dt -> Some dt
-    | _ -> None
 
 let private getNewId (metadata:Metadata) =
     let pk =
@@ -136,12 +131,20 @@ module LinkParser =
                 let hover = if item.Link.InnerAlt.IsSome then $" \"{item.Link.InnerAlt.Value}\"" else ""
                 $"![{safeName}]({safePrefix}{item.NewFilename}{hover})"
             | Link -> $"[{safeName}]({safePrefix}{item.NewFilename})"
+    let private getMd5Hash (input:string) =
+        use md5 = System.Security.Cryptography.MD5.Create()
+        input
+        |> System.Text.Encoding.ASCII.GetBytes
+        |> md5.ComputeHash
+        |> Array.map (fun x -> x.ToString("X2"))
+        |> String.concat String.Empty
+        |> _.ToLowerInvariant()
 
     let private getNewName (link:MarkdownLink) (file:string,base64:string) =
         {
             Link = link
             Base64Payload = base64
-            NewFilename = Guid.NewGuid().ToString("N") + Path.GetExtension(file)
+            NewFilename = (getMd5Hash base64) + Path.GetExtension(file)
         }
 
     let withReplacement (files:(string * string) list) (links:MarkdownLink list) =
@@ -157,13 +160,18 @@ module LinkParser =
         replaces |> List.fold folder markdown
 
 module TableStorage =
+    let private ignoredMetadata = ["id"; pkKey]
+    
     let toEntity id name path content (meta:Metadata) =
         let partition,row = id |> partitionAndRow
         let entity = TableEntity(partition, row)
         entity.Add("Name", name)
         entity.Add("Path", path)
         entity.Add("Content", content)
-        for k,v in meta |> List.filter (fun (x,_) -> String.Compare(x,"id",StringComparison.InvariantCultureIgnoreCase) <> 0) do
+
+        let filteredMeta = meta |> List.filter (fun (k,_) -> not (List.contains (k.ToLowerInvariant()) ignoredMetadata))
+
+        for k,v in filteredMeta do
             let name = $"meta_{k}"
             entity.Add(name, v.ToJsonString(jsonOptions))
         entity
