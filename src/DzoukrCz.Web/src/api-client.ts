@@ -9,7 +9,7 @@ export interface EventRecord {
 }
 
 export async function getEvents(): Promise<EventRecord[]> {
-    const res = await fetch("https://media.dzoukr.cz/talks.json", { next: { revalidate: 3600 } }); 
+    const res = await fetch("https://moonserver.dzoukr.cz/data/talks", { next: { revalidate: 3600 } }); 
     if (!res.ok) {
         throw new Error('Failed to fetch events');
     }

@@ -57,4 +57,4 @@ jobs:
           resourceGroup: ${{ env.AZURE_RESOURCE_GROUP }}
           containerAppName: ${{ env.AZURE_CONTAINER_APP_NAME }}
           imageToDeploy: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          environmentVariables: StorageAccount='${{ secrets.MOONSERVER_STORAGE_ACCOUNT }}' ApiKey='${{ secrets.MOONSERVER_API_KEY }}' ApiSecret='${{ secrets.MOONSERVER_API_SECRET }}' PathPrefix='https://media.dzoukr.cz/' ContainerName='$web' TableName='MoonServerMedia'
+          environmentVariables: StorageAccount='${{ secrets.MOONSERVER_STORAGE_ACCOUNT }}' ApiKey='${{ secrets.MOONSERVER_API_KEY }}' ApiSecret='${{ secrets.MOONSERVER_API_SECRET }}' PathPrefix='https://media.dzoukr.cz/' ContainerName=$web TableName='MoonServerMedia'

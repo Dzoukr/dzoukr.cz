@@ -12,23 +12,21 @@ function extractMarkdownUrl(input: string): string | null {
 }
 
 function EventBox(event:EventRecord) {
-  const image = extractMarkdownUrl(event.Logo);
-  const link = extractMarkdownUrl(event.Link);
   
   const date = new Intl.DateTimeFormat('cs-CZ', {
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-}).format(new Date(event.Date));
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(event.Date));
   
   
   return (
     <div className="card card-border w-full shadow-xl bg-base-200 ">
-      {image && (
+      {event.Logo && (
         
         <figure className="h-48 bg-white relative w-full overflow-hidden">
           <img 
-        src={image}
+        src={event.Logo}
         alt={event.Event}
         
         className="absolute inset-0 h-full w-full object-cover object-center"
@@ -56,9 +54,9 @@ function EventBox(event:EventRecord) {
         
         
         <div className="card-actions justify-center mt-4 grow flex flex-row justify-center items-end">
-          {link && (
+          {event.Link && (
           <Link 
-            href={link} 
+            href={event.Link} 
             className="btn btn-warning rounded-sm"
             target="_blank"
           >
