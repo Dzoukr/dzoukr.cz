@@ -24,12 +24,4 @@ EXPOSE 8080
 # Copy the published app
 COPY --from=build /app/publish .
 
-# Environment variables for configuration
-ENV StorageAccount=""
-ENV TableName="MoonServerMedia"
-ENV ContainerName="$web"
-ENV PathPrefix="https://media.dzoukr.cz/"
-ENV ApiKey=""
-ENV ApiSecret=""
-
 ENTRYPOINT ["dotnet", "DzoukrCz.MoonServer.dll"]
