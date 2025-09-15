@@ -1,4 +1,4 @@
-name: MoonServer CI/CD
+name: MoonServer
 
 on:
   push:
@@ -42,10 +42,12 @@ jobs:
           context: .
           file: src/DzoukrCz.MoonServer/Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           
       - name: Azure login
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -54,11 +56,5 @@ jobs:
         with:
           resourceGroup: ${{ env.AZURE_RESOURCE_GROUP }}
           containerAppName: ${{ env.AZURE_CONTAINER_APP_NAME }}
-          imageToDeploy: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          environmentVariables: |
-            StorageAccount=${{ secrets.MOONSERVER_STORAGE_ACCOUNT }}
-            ApiKey=${{ secrets.MOONSERVER_API_KEY }}
-            ApiSecret=${{ secrets.MOONSERVER_API_SECRET }}
-            TableName=MoonServerMedia
-            ContainerName=$web
-            PathPrefix=https://media.dzoukr.cz/
+          imageToDeploy: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          environmentVariables: StorageAccount='${{ secrets.MOONSERVER_STORAGE_ACCOUNT }}' ApiKey='${{ secrets.MOONSERVER_API_KEY }}' ApiSecret='${{ secrets.MOONSERVER_API_SECRET }}'

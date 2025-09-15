@@ -19,8 +19,7 @@ RUN dotnet publish "DzoukrCz.MoonServer.fsproj" -c Release -o /app/publish /p:Us
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
 
 # Copy the published app
 COPY --from=build /app/publish .
