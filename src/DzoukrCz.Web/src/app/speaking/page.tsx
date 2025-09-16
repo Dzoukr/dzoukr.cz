@@ -1,15 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 
 import { getEvents, EventRecord } from "@/api-client";
 import { PageLayout } from "@/components/page-layout";
-
-
-function extractMarkdownUrl(input: string): string | null {
-  const MD_LINK_OR_IMAGE = /^["']?\s*!?\[[^\]]*]\(\s*<?(?<url>[^)\s>]+)>?(?:\s+["'(][^"')]*["')])?\s*\)\s*["']?$/;
-  const m = MD_LINK_OR_IMAGE.exec(input.trim());
-  return m?.groups?.url ?? null;
-}
 
 function EventBox(event:EventRecord) {
   
@@ -54,7 +46,7 @@ function EventBox(event:EventRecord) {
         
         
         <div className="card-actions justify-center mt-4 grow flex flex-row justify-center items-end">
-          {event.Link && (
+          {event.Link && event.LinkActive && (
           <Link 
             href={event.Link} 
             className="btn btn-warning rounded-sm"
@@ -72,7 +64,7 @@ function EventBox(event:EventRecord) {
 
 export default async function Speaking() {
   const events = await getEvents();
-  
+
   return (
     <PageLayout forPage="/speaking">
       <div className="formatted-text">

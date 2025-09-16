@@ -1,11 +1,31 @@
 export interface EventRecord {
-    Date: string;  // ISO date string, e.g. "2018-03-29"
+    Date: string;  
     Event: string;
     Title: string;
-    Place: string; // e.g. "Prague, CZ"
-    Lang: string;  // e.g. "CZ"
-    Link: string;  // markdown link
-    Logo: string;  // markdown image
+    Place: string; 
+    Lang: string;  
+    Link: string;  
+    LinkActive: boolean;
+    Logo: string;
+}
+
+function toSafeName<T>(items: any[]): T[] {
+    const booleanKeys = Object.entries(items[0] || {})
+        .filter(([_, value]) => typeof value === 'string' && ['true', 'false'].includes(value.toLowerCase()))
+        .map(([key]) => key.split(/\s+/).join(''));
+
+    return items.map(item => {
+        const cleanedItem = Object.fromEntries(
+            Object.entries(item).map(([key, value]) => {
+                const cleanKey = key.split(/\s+/).join('');
+                if (booleanKeys.includes(cleanKey)) {
+                    return [cleanKey, String(value).toLowerCase() === 'true'];
+                }
+                return [cleanKey, value];
+            })
+        );
+        return cleanedItem as T;
+    });
 }
 
 export async function getEvents(): Promise<EventRecord[]> {
@@ -13,5 +33,8 @@ export async function getEvents(): Promise<EventRecord[]> {
     if (!res.ok) {
         throw new Error('Failed to fetch events');
     }
-    return res.json();
+    const json = res.json();
+    return json.then(data => toSafeName<EventRecord>(data));
 }
+
+
